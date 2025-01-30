@@ -1,6 +1,6 @@
 package idi.edu.idatt.mappe;
 
-public class Main {
+public class BoardgameApp {
     public static void main(String[] args) {
         System.out.println("Hello world!");
     }
