@@ -8,6 +8,10 @@ import java.util.stream.Collectors;
 /**
  * The Dice class represents a collection of dice that can be rolled together.
  * The number of dice is dynamically determined, making it flexible.
+ * <p>
+ *     The class uses java.util.ArrayList and
+ *     java.util.List for storing the dice data.
+ * </p>
  */
 public class Dice {
     private final List<Die> dice;
