@@ -5,8 +5,9 @@ import java.util.Random;
 /**
  * The Die class that represents a six-sized die.
  * It can be rolled to generate a random value between 1 and 6.
- *
+ * <p>
  * The class utilizes {@link java.util.Random} to generate random values.
+ * </p>
  */
 public class Die {
     private int lastRolledValue;
