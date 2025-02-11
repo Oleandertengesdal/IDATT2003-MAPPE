@@ -19,7 +19,7 @@ class DiceTest {
     void testRoll() {
         for (int i = 0; i < 100; i++) {
             int sum = dice.roll();
-            assertTrue(sum >= 5 && sum <= 30, "The sume of two dice should be between 2 and 12");
+            assertTrue(sum >= 5 && sum <= 30, "The sume of two dice should be between 5 and 30");
         }
     }
 
@@ -36,7 +36,6 @@ class DiceTest {
     @Test
     void testGetDie() {
         //Check if all the dice are between 1 and 6.
-        Dice dice = new Dice(10);
         dice.roll();
         for (int i = 0; i < dice.getValues().size();i++) {
             int value = dice.getDie(i+1);

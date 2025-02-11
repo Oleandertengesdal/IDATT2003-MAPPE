@@ -2,6 +2,8 @@ package idi.edu.idatt.mappe.models.dice;
 
 import java.util.Random;
 
+import static idi.edu.idatt.mappe.validators.DieValidator.validateDieSides;
+
 /**
  * The Die class that represents a six-sized die.
  * It can be rolled to generate a random value between 1 and 6.
@@ -12,12 +14,23 @@ import java.util.Random;
 public class Die {
     private int lastRolledValue;
     private final Random random;
+    private final int numberOfSides;
 
     /**
      * Creates a new Die object and rolls it once upon initialization.
-     */    public Die() {
+     */
+    public Die(int numberOfSides) {
+        validateDieSides(numberOfSides);
+        this.numberOfSides = numberOfSides;
         random = new Random();
-        lastRolledValue = random.nextInt(6) + 1;
+        lastRolledValue = random.nextInt(numberOfSides) + 1;
+    }
+
+    /**
+     * Creates a new Die object with 6 sides and rolls it once upon initialization.
+     */
+    public Die() {
+        this(6);
     }
 
     /**
@@ -26,7 +39,7 @@ public class Die {
      * @return the new value of the die after rolling..
      */
     public int roll() {
-        lastRolledValue = random.nextInt(6) + 1;
+        lastRolledValue = random.nextInt(numberOfSides) + 1;
         return lastRolledValue;
     }
 
@@ -37,5 +50,14 @@ public class Die {
      */
     public int getValue() {
         return lastRolledValue;
+    }
+
+    /**
+     * Retrieves the number of sides of the die.
+     *
+     * @return the number of sides of the die.
+     */
+    public int getNumberOfSides() {
+        return numberOfSides;
     }
 }
