@@ -3,7 +3,9 @@ package idi.edu.idatt.mappe.models.dice;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
+
+import static idi.edu.idatt.mappe.validators.DieValidator.validateNumberOfDice;
+import static idi.edu.idatt.mappe.validators.DieValidator.validateGetDice;
 
 /**
  * The Dice class represents a collection of dice that can be rolled together.
@@ -22,15 +24,23 @@ public class Dice {
      * @param numberOfDice the number of dice to include in this collection.
      * @throws IllegalArgumentException if numberOfDice is less than 1.
      */
-    public Dice(int numberOfDice) {
-        if (numberOfDice < 1) {
-            throw new IllegalArgumentException("Number of dice must be at least 1.");
-        }
+    public Dice(int numberOfDice, int numberOfSides) {
+        validateNumberOfDice(numberOfDice, numberOfSides);
         dice = new ArrayList<>();
         for (int i = 0; i < numberOfDice; i++) {
-            dice.add(new Die());
+            dice.add(new Die(numberOfSides));
 
         }
+    }
+
+    /**
+     * Creates a new object with a specified number of dice.
+     *
+     * @param numberOfDice the number of dice to include in this collection.
+     * @throws IllegalArgumentException if numberOfDice is less than 1.
+     */
+    public Dice(int numberOfDice) {
+        this(numberOfDice, 6);
     }
 
     /**
@@ -50,9 +60,9 @@ public class Dice {
      * @return a list of integers representing the values of each die
      */
     public List<Integer> getValues() {
-        return dice.stream()
+        return List.copyOf(dice.stream()
                 .map(Die::getValue)
-                .collect(Collectors.toList());
+                .toList());
     }
 
     /**
@@ -63,9 +73,7 @@ public class Dice {
      * @throws IllegalArgumentException if dieNumber is out of range.
      */
     public int getDie(int dieNumber) {
-        if (dieNumber < 1 || dieNumber > dice.size()) {
-            throw new IllegalArgumentException("Die number must be between 1 and " + dice.size() + ".");
-        }
+        validateGetDice(dieNumber, dice);
         return dice.get(dieNumber - 1).getValue();
     }
 }
