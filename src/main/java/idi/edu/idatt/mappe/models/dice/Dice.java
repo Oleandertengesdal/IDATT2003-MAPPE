@@ -3,6 +3,7 @@ package idi.edu.idatt.mappe.models.dice;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Logger;
 
 import static idi.edu.idatt.mappe.validators.DieValidator.validateNumberOfDice;
 import static idi.edu.idatt.mappe.validators.DieValidator.validateGetDice;
@@ -16,6 +17,9 @@ import static idi.edu.idatt.mappe.validators.DieValidator.validateGetDice;
  * </p>
  */
 public class Dice {
+
+    private static final Logger logger = Logger.getLogger(Dice.class.getName());
+
     private final List<Die> dice;
 
     /**
@@ -29,7 +33,6 @@ public class Dice {
         dice = new ArrayList<>();
         for (int i = 0; i < numberOfDice; i++) {
             dice.add(new Die(numberOfSides));
-
         }
     }
 

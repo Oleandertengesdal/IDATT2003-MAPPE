@@ -48,6 +48,26 @@ public class Player {
     }
 
     /**
+     * Returns the board of the game
+     *
+     * @return The board of the game
+     */
+    public Board getBoard() {
+        return game.getBoard();
+    }
+
+    /**
+     * Sets the BoardGame of the player
+     *
+     * @param game The game the player is playing
+     */
+
+    public void setGame(BoardGame game) {
+        this.game = game;
+    }
+
+
+    /**
      * Places the player on the given tile
      *
      * @param tile The tile to place the player on

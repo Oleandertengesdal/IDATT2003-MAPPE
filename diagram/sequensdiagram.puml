@@ -1,0 +1,23 @@
+@startuml
+actor User
+participant BoardGame
+participant Dice
+participant Die
+participant Player
+participant Tile
+participant TileAction
+
+
+User -> BoardGame: play()
+BoardGame -> Dice: roll()
+Dice -> Die: roll()
+Die -> Dice: getValue()
+Dice -> BoardGame: getValues()
+BoardGame -> Player: movePlayer(Player, getValues())
+Player -> Tile: landAction(Player)
+Tile -> TileAction: perform(Player)
+TileAction -> Tile: snakeTileAction(Player)
+Tile -> Player: movePlayer();
+Player -> BoardGame: endTurn()
+BoardGame -> User: endTurn()
+@enduml
