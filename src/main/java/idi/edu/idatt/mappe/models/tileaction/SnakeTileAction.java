@@ -3,7 +3,7 @@ package idi.edu.idatt.mappe.models.tileaction;
 import idi.edu.idatt.mappe.models.Player;
 import idi.edu.idatt.mappe.models.Tile;
 
-public class SnakeTileAction {
+public class SnakeTileAction implements TileAction {
 
     private final int destinationTileId;
     private final String description;
@@ -42,6 +42,7 @@ public class SnakeTileAction {
      *
      * @param player The player to move
      */
+    @Override
     public void perform(Player player) {
         player.placeOnTile(destinationTileId);
     }

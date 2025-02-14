@@ -17,16 +17,28 @@ public class RandomTeleportTileAction implements TileAction {
 
     private Board board;
     private Random random;
+    private String description;
 
     /**
      * Creates a new random teleport tile action
      *
      * @param board The board to teleport on
      */
-    public RandomTeleportTileAction(Board board) {
+    public RandomTeleportTileAction(Board board, String description) {
         super();
         this.board = board;
         this.random = new Random();
+        this.description = description;
+    }
+
+
+    /**
+     * Returns the description of the action
+     *
+     * @return The description of the action
+     */
+    public String getDescription() {
+        return description;
     }
 
     /**
