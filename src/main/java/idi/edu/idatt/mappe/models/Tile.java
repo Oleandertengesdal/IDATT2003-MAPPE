@@ -30,6 +30,8 @@ public class Tile {
      * @param player
      */
     public void landPlayer(Player player) {
+        validatePlayer(player);
+        validateTileAction(landAction);
         landAction.perform(player);
     }
 
@@ -40,6 +42,15 @@ public class Tile {
      */
     public void leavePlayer(Player player) {
         // TODO: Implement
+    }
+
+    /**
+     * Returns the next tile
+     *
+     * @return The next tile
+     */
+    public Tile getNextTile() {
+        return nextTile;
     }
 
     /**

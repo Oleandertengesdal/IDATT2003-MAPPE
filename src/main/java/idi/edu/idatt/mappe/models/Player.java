@@ -13,11 +13,9 @@ public class Player {
      * Creates a new player with the given name and game
      *
      * @param name The name of the player
-     * @param game The game the player is playing
      */
-    public Player(String name, BoardGame game) {
+    public Player(String name) {
         this.name = name;
-        this.game = game;
     }
 
     /**
@@ -48,6 +46,26 @@ public class Player {
     }
 
     /**
+     * Returns the board of the game
+     *
+     * @return The board of the game
+     */
+    public Board getBoard() {
+        return game.getBoard();
+    }
+
+    /**
+     * Sets the BoardGame of the player
+     *
+     * @param game The game the player is playing
+     */
+
+    public void setGame(BoardGame game) {
+        this.game = game;
+    }
+
+
+    /**
      * Places the player on the given tile
      *
      * @param tile The tile to place the player on
@@ -62,11 +80,18 @@ public class Player {
      * @param steps The number of steps to move
      */
     public void move(int steps) {
+        if (currentTile == null) {
+            throw new IllegalStateException("The player must be placed on a tile before moving");
+        }
         Tile newTile = currentTile;
         for (int i = 0; i < steps; i++) {
-            newTile = newTile.nextTile;
+            if (newTile.getNextTile() == null) {
+                // Player has reached or passed the last tile
+                System.out.println(name + " has reached the end of the game!");
+                return;
+            }
+            newTile = newTile.getNextTile();
         }
         currentTile = newTile;
-        currentTile.landPlayer(this);
     }
 }

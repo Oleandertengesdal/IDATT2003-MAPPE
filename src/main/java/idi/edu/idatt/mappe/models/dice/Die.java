@@ -1,6 +1,7 @@
 package idi.edu.idatt.mappe.models.dice;
 
 import java.util.Random;
+import java.util.logging.Logger;
 
 import static idi.edu.idatt.mappe.validators.DieValidator.validateDieSides;
 
@@ -12,6 +13,9 @@ import static idi.edu.idatt.mappe.validators.DieValidator.validateDieSides;
  * </p>
  */
 public class Die {
+
+    private static final Logger logger = Logger.getLogger(Die.class.getName());
+
     private int lastRolledValue;
     private final Random random;
     private final int numberOfSides;

@@ -37,6 +37,34 @@ public class BoardGame {
     }
 
     /**
+     * Returns the dice of the game
+     *
+     * @return The dice of the game
+     */
+    public Dice getDice() {
+        return dice;
+    }
+
+    /**
+     * Sets the current player
+     *
+     * @param currentPlayer The current player
+     */
+    public void setCurrentPlayer(Player currentPlayer) {
+        this.currentPlayer = currentPlayer;
+    }
+
+    /**
+     * Returns the current player
+     *
+     * @return The current player
+     */
+    public Player getCurrentPlayer() {
+        return currentPlayer;
+    }
+
+
+    /**
      * Sets the board of the game
      *
      * @param board The board of the game
