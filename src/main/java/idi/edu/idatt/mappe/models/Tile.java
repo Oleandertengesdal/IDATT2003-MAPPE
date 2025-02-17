@@ -30,6 +30,8 @@ public class Tile {
      * @param player
      */
     public void landPlayer(Player player) {
+        validatePlayer(player);
+        validateTileAction(landAction);
         landAction.perform(player);
     }
 

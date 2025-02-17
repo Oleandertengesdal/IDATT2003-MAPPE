@@ -13,9 +13,8 @@ public class Player {
      * Creates a new player with the given name and game
      *
      * @param name The name of the player
-     * @param game The game the player is playing
      */
-    public Player(String name, BoardGame game) {
+    public Player(String name) {
         this.name = name;
         this.game = game;
     }
