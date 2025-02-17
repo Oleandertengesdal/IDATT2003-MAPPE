@@ -16,7 +16,6 @@ public class Player {
      */
     public Player(String name) {
         this.name = name;
-        this.game = game;
     }
 
     /**
@@ -81,11 +80,18 @@ public class Player {
      * @param steps The number of steps to move
      */
     public void move(int steps) {
+        if (currentTile == null) {
+            throw new IllegalStateException("The player must be placed on a tile before moving");
+        }
         Tile newTile = currentTile;
         for (int i = 0; i < steps; i++) {
-            newTile = newTile.nextTile;
+            if (newTile.getNextTile() == null) {
+                // Player has reached or passed the last tile
+                System.out.println(name + " has reached the end of the game!");
+                return;
+            }
+            newTile = newTile.getNextTile();
         }
         currentTile = newTile;
-        currentTile.landPlayer(this);
     }
 }

@@ -4,6 +4,7 @@ import idi.edu.idatt.mappe.models.Board;
 import idi.edu.idatt.mappe.models.BoardGame;
 import idi.edu.idatt.mappe.models.Player;
 import idi.edu.idatt.mappe.models.Tile;
+import idi.edu.idatt.mappe.models.dice.Dice;
 import idi.edu.idatt.mappe.models.tileaction.LadderTileAction;
 import idi.edu.idatt.mappe.models.tileaction.SnakeTileAction;
 import idi.edu.idatt.mappe.models.tileaction.TileAction;
@@ -11,6 +12,8 @@ import idi.edu.idatt.mappe.models.tileaction.TileAction;
 import java.util.Random;
 
 public class SnakesAndLadders extends BoardGame {
+
+    private Dice dice = getDice();
 
     public SnakesAndLadders() {
         super();
@@ -61,6 +64,33 @@ public class SnakesAndLadders extends BoardGame {
             movePlayer(player, steps);
             player.getCurrentTile().landPlayer(player);
             System.out.println("Player " + player.getName() + " on tile " + player.getCurrentTile().getIndex());
+        }
+    }
+
+    public void addPlayerBoard() {
+        for (Player player : getPlayers()) {
+            player.setGame(this);
+            player.placeOnTile(getBoard().getTile(0));
+        }
+    }
+
+    public void playGame() {
+        boolean gameWon = false;
+        while (!gameWon) {
+            for (Player player : getPlayers()) {
+                int steps = dice.roll();
+                player.move(steps);
+                TileAction action = player.getCurrentTile().getLandAction();
+                if (action != null) {
+                    action.perform(player);
+                }
+                System.out.println("Player " + player.getName() + " on tile " + player.getCurrentTile().getIndex());
+                if (player.getCurrentTile().getNextTile() == null) {
+                    System.out.println(player.getName() + " has won the game!");
+                    gameWon = true;
+                    break;
+                }
+            }
         }
     }
 }

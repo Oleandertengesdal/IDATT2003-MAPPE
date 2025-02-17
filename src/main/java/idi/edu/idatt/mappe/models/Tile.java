@@ -49,6 +49,15 @@ public class Tile {
      *
      * @return The next tile
      */
+    public Tile getNextTile() {
+        return nextTile;
+    }
+
+    /**
+     * Returns the next tile
+     *
+     * @return The next tile
+     */
     public void setNextTile(Tile nextTile) {
         this.nextTile = nextTile;
     }
