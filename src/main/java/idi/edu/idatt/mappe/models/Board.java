@@ -3,6 +3,8 @@ package idi.edu.idatt.mappe.models;
 import java.util.HashMap;
 import java.util.Map;
 
+import static idi.edu.idatt.mappe.validators.TileValidator.validateTileIndex;
+
 /**
  * The Board class represents the game board of the game.
  */
@@ -35,11 +37,11 @@ public class Board {
             throw new IllegalArgumentException("The size of the board must be at least 1");
         }
         tiles = new HashMap<>();
-        for (int i = 0; i < size; i++) {
+        for (int i = 1; i <= size; i++) {
             tiles.put(i, new Tile(i));
         }
         // Connect the tiles
-        for (int i = 0; i < size - 1; i++) {
+        for (int i = 1; i <= size - 1; i++) {
             tiles.get(i).setNextTile(tiles.get(i + 1));
         }
     }
@@ -60,6 +62,7 @@ public class Board {
      * @return The tile at the given index
      */
     public Tile getTile(int tileIndex) {
+        validateTileIndex(tileIndex, tiles.size());
         return tiles.get(tileIndex);
     }
 
@@ -71,6 +74,7 @@ public class Board {
      * @param tile The tile to set
      */
     public void setTile(int index, Tile tile) {
+        validateTileIndex(index, tiles.size());
         tiles.put(index, tile);
     }
 

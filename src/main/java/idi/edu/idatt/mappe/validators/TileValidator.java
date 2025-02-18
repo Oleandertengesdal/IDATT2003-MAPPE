@@ -25,8 +25,8 @@ public class TileValidator {
      * @param size The size of the board
      */
     public static void validateTileIndex(int tileIndex, int size) {
-        if (tileIndex < 0 || tileIndex >= size) {
-            throw new IllegalArgumentException("Invalid tile index");
+        if (tileIndex < 1 || tileIndex > size) {
+            throw new IndexOutOfBoundsException("Invalid tile index");
         }
     }
 
@@ -36,8 +36,10 @@ public class TileValidator {
      * @param tileAction The tile action to validate
      */
     public static void validateTileAction(TileAction tileAction) {
+        /*
         if (tileAction == null) {
             throw new IllegalArgumentException("Tile action cannot be null");
         }
+        */
     }
 }

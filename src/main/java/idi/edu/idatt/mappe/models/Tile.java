@@ -84,6 +84,15 @@ public class Tile {
     }
 
     /**
+     * Gets the action to be performed when a player lands on this tile
+     *
+     * @return The action to be performed
+     */
+    public TileAction getLandAction() {
+        return landAction;
+    }
+
+    /**
      *  Returns the index of the tile
      *
      * @return The index of the tile
