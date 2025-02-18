@@ -8,6 +8,8 @@ public class Player {
     private String name;
     private Tile currentTile;
     private BoardGame game;
+    private boolean extraThrow;
+    private boolean missingTurn;
 
     /**
      * Creates a new player with the given name and game
@@ -73,6 +75,44 @@ public class Player {
     public void placeOnTile(Tile tile) {
         this.currentTile = tile;
     }
+
+    /**
+     * Returns whether the player has an extra throw
+     *
+     * @return Whether the player has an extra throw
+     */
+    public boolean hasExtraThrow() {
+        return extraThrow;
+    }
+
+    /**
+     * Sets whether the player has an extra throw
+     *
+     * @param extraThrow Whether the player has an extra throw
+     */
+    public void setExtraThrow(boolean extraThrow) {
+        this.extraThrow = extraThrow;
+    }
+
+    /**
+     * Returns whether the player is missing a turn
+     *
+     * @return Whether the player is missing a turn
+     */
+    public boolean isMissingTurn() {
+        return missingTurn;
+    }
+
+    /**
+     * Sets whether the player is missing a turn
+     *
+     * @param missingTurn Whether the player is missing a turn
+     */
+    public void setMissingTurn(boolean missingTurn) {
+        this.missingTurn = missingTurn;
+    }
+
+
 
     /**
      * Moves the player a given number of steps
