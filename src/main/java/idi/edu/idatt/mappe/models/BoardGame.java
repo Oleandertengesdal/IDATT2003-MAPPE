@@ -108,6 +108,7 @@ public class BoardGame {
      */
     public void addPlayer(Player player) {
         players.add(player);
+        player.setGame(this);
     }
 
 

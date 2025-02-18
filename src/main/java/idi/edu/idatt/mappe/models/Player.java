@@ -1,5 +1,7 @@
 package idi.edu.idatt.mappe.models;
 
+import java.util.logging.Logger;
+
 /**
  * Represents a player in a board game.
  */
@@ -10,6 +12,8 @@ public class Player {
     private BoardGame game;
     private boolean extraThrow;
     private boolean missingTurn;
+
+    private static final Logger logger = Logger.getLogger(Player.class.getName());
 
     /**
      * Creates a new player with the given name and game
@@ -56,6 +60,15 @@ public class Player {
      */
     public Board getBoard() {
         return game.getBoard();
+    }
+
+    /**
+     * Returns the BoardGame of the player
+     *
+     * @return The game the player is playing
+     */
+    public BoardGame getGame() {
+        return game;
     }
 
     /**
@@ -122,6 +135,10 @@ public class Player {
      * @param steps The number of steps to move
      */
     public void move(int steps) {
+        if(missingTurn){
+            logger.info(name + " is missing a turn");
+            missingTurn = false;
+        } else {
         if (currentTile == null) {
             throw new IllegalStateException("The player must be placed on a tile before moving");
         }
@@ -135,5 +152,6 @@ public class Player {
             newTile = newTile.getNextTile();
         }
         currentTile = newTile;
+        }
     }
 }
