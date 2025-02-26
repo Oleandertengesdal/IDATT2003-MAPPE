@@ -1,5 +1,7 @@
 package idi.edu.idatt.mappe.models;
 
+import java.util.logging.Logger;
+
 /**
  * Represents a player in a board game.
  */
@@ -8,6 +10,10 @@ public class Player {
     private String name;
     private Tile currentTile;
     private BoardGame game;
+    private boolean extraThrow;
+    private boolean missingTurn;
+
+    private static final Logger logger = Logger.getLogger(Player.class.getName());
 
     /**
      * Creates a new player with the given name and game
@@ -16,6 +22,8 @@ public class Player {
      */
     public Player(String name) {
         this.name = name;
+        this.missingTurn = false;
+        this.extraThrow = false;
     }
 
     /**
@@ -55,6 +63,15 @@ public class Player {
     }
 
     /**
+     * Returns the BoardGame of the player
+     *
+     * @return The game the player is playing
+     */
+    public BoardGame getGame() {
+        return game;
+    }
+
+    /**
      * Sets the BoardGame of the player
      *
      * @param game The game the player is playing
@@ -72,7 +89,46 @@ public class Player {
      */
     public void placeOnTile(Tile tile) {
         this.currentTile = tile;
+        tile.landPlayer(this);
     }
+
+    /**
+     * Returns whether the player has an extra throw
+     *
+     * @return Whether the player has an extra throw
+     */
+    public boolean hasExtraThrow() {
+        return extraThrow;
+    }
+
+    /**
+     * Sets whether the player has an extra throw
+     *
+     * @param extraThrow Whether the player has an extra throw
+     */
+    public void setExtraThrow(boolean extraThrow) {
+        this.extraThrow = extraThrow;
+    }
+
+    /**
+     * Returns whether the player is missing a turn
+     *
+     * @return Whether the player is missing a turn
+     */
+    public boolean isMissingTurn() {
+        return missingTurn;
+    }
+
+    /**
+     * Sets whether the player is missing a turn
+     *
+     * @param missingTurn Whether the player is missing a turn
+     */
+    public void setMissingTurn(boolean missingTurn) {
+        this.missingTurn = missingTurn;
+    }
+
+
 
     /**
      * Moves the player a given number of steps
@@ -80,6 +136,10 @@ public class Player {
      * @param steps The number of steps to move
      */
     public void move(int steps) {
+        if(missingTurn){
+            logger.info(name + " is missing a turn");
+            missingTurn = false;
+        } else {
         if (currentTile == null) {
             throw new IllegalStateException("The player must be placed on a tile before moving");
         }
@@ -93,5 +153,6 @@ public class Player {
             newTile = newTile.getNextTile();
         }
         currentTile = newTile;
+        }
     }
 }

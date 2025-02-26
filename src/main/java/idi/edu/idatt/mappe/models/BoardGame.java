@@ -108,6 +108,7 @@ public class BoardGame {
      */
     public void addPlayer(Player player) {
         players.add(player);
+        player.setGame(this);
     }
 
 
@@ -122,25 +123,35 @@ public class BoardGame {
     /**
      * Gets the winner of the game
      */
-    public void getWinner() {
+    public boolean getWinner() {
         for (Player player : players) {
-            if (player.getCurrentTile().getIndex() == board.getTiles().size() - 1) {
+            if (player.getCurrentTile().getIndex() == board.getTiles().size()) {
                 System.out.println(player.getName() + " is the winner!");
+                return true;
             }
         }
+        return false;
     }
 
-
+    /**
+     * Starts the game
+     */
     public void startGame() {
         for (Player player : players) {
-            player.placeOnTile(board.getTile(0));
+            player.placeOnTile(board.getTile(1));
         }
     }
 
+    /**
+     * Moves a player a given number of steps
+     *
+     * @param player The player to move
+     * @param steps The number of steps to move
+     */
     public void movePlayer(Player player, int steps) {
         Tile currentTile = player.getCurrentTile();
         int currentIndex = 0;
-        for (int i = 0; i < board.getTiles().size(); i++) {
+        for (int i = 1; i <= board.getTiles().size(); i++) {
             if (board.getTile(i).equals(currentTile)) {
                 currentIndex = i;
                 break;
@@ -148,7 +159,7 @@ public class BoardGame {
         }
         int newIndex = currentIndex + steps;
         if (newIndex >= board.getTiles().size()) {
-            newIndex = board.getTiles().size() - 1;
+            newIndex = board.getTiles().size();
         }
         player.placeOnTile(board.getTile(newIndex));
     }

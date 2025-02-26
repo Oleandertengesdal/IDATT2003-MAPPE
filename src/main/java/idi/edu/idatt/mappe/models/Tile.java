@@ -32,7 +32,10 @@ public class Tile {
     public void landPlayer(Player player) {
         validatePlayer(player);
         validateTileAction(landAction);
-        landAction.perform(player);
+        if (landAction != null) {
+            System.out.println("Player " + player.getName() + " landed on tile " + tileId);
+            landAction.perform(player);
+        }
     }
 
     /**
@@ -81,6 +84,15 @@ public class Tile {
         validatePlayer(player);
         validateTileAction(landAction);
         landAction.perform(player);
+    }
+
+    /**
+     * Gets the action to be performed when a player lands on this tile
+     *
+     * @return The action to be performed
+     */
+    public TileAction getLandAction() {
+        return landAction;
     }
 
     /**
