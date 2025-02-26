@@ -123,21 +123,31 @@ public class BoardGame {
     /**
      * Gets the winner of the game
      */
-    public void getWinner() {
+    public boolean getWinner() {
         for (Player player : players) {
             if (player.getCurrentTile().getIndex() == board.getTiles().size()) {
                 System.out.println(player.getName() + " is the winner!");
+                return true;
             }
         }
+        return false;
     }
 
-
+    /**
+     * Starts the game
+     */
     public void startGame() {
         for (Player player : players) {
             player.placeOnTile(board.getTile(1));
         }
     }
 
+    /**
+     * Moves a player a given number of steps
+     *
+     * @param player The player to move
+     * @param steps The number of steps to move
+     */
     public void movePlayer(Player player, int steps) {
         Tile currentTile = player.getCurrentTile();
         int currentIndex = 0;

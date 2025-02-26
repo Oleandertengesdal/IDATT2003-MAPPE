@@ -32,7 +32,10 @@ public class Tile {
     public void landPlayer(Player player) {
         validatePlayer(player);
         validateTileAction(landAction);
-        landAction.perform(player);
+        if (landAction != null) {
+            System.out.println("Player " + player.getName() + " landed on tile " + tileId);
+            landAction.perform(player);
+        }
     }
 
     /**

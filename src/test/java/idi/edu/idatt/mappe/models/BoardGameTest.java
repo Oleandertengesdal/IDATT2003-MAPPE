@@ -58,7 +58,7 @@ class BoardGameTest {
     @Test
     void testGetWinner() {
         Tile lastTile = boardGame.getBoard().getTile(100);
-        boardGame.getBoard().addTile(lastTile);
+        boardGame.getBoard().addTile(100 ,lastTile);
         player1.placeOnTile(lastTile);
         boardGame.getWinner();
         // Check console output for winner announcement

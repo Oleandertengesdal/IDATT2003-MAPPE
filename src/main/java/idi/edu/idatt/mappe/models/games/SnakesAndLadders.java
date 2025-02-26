@@ -7,11 +7,10 @@ import idi.edu.idatt.mappe.models.Tile;
 import idi.edu.idatt.mappe.models.dice.Dice;
 import idi.edu.idatt.mappe.models.tileaction.LadderTileAction;
 import idi.edu.idatt.mappe.models.tileaction.SnakeTileAction;
-import idi.edu.idatt.mappe.models.tileaction.TileAction;
 
-import java.text.MessageFormat;
 import java.util.Random;
 import java.util.logging.Logger;
+
 
 public class SnakesAndLadders extends BoardGame {
 
@@ -29,9 +28,9 @@ public class SnakesAndLadders extends BoardGame {
         super();
         createBoard(BOARD_SIZE); // Standard board size
         createDice(NUMBER_OF_DICE); // Two dice
-        setupBoard();
         dice = getDice();
         random = new Random();
+        setupBoard();
         logger.info("Created a new Snakes and Ladders game");
     }
 
@@ -39,20 +38,22 @@ public class SnakesAndLadders extends BoardGame {
      * Sets up the board with snakes and ladders
      */
     private void setupBoard() {
-        int numberOfSnakes = 10;
-        int numberOfLadders = 10;
+        int numberOfSnakes = 6;
+        int numberOfLadders = 6;
 
        logger.info("Setting up the board with snakes and ladders");
         for (int i = 0; i < numberOfSnakes; i++) {
             int start = random.nextInt(80) + 10; // Ensure snakes start within the board range
             int end = random.nextInt(start - 1) + 1; // Ensure end is before start
             setSnake(start, end);
+
         }
 
         for (int i = 0; i < numberOfLadders; i++) {
             int start = random.nextInt(80) + 1; // Ensure ladders start within the board range
             int end = random.nextInt(90 - start) + start + 1; // Ensure end is after start
             setLadder(start, end);
+
         }
     }
 
@@ -104,7 +105,7 @@ public class SnakesAndLadders extends BoardGame {
     public void addPlayerBoard() {
         for (Player player : getPlayers()) {
             player.setGame(this);
-            player.placeOnTile(getBoard().getTile(0));
+            player.placeOnTile(getBoard().getTile(1));
         }
     }
 }

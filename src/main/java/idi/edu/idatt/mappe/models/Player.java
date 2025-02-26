@@ -89,6 +89,7 @@ public class Player {
      */
     public void placeOnTile(Tile tile) {
         this.currentTile = tile;
+        tile.landPlayer(this);
     }
 
     /**

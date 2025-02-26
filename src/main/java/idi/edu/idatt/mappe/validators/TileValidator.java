@@ -1,5 +1,6 @@
 package idi.edu.idatt.mappe.validators;
 
+import idi.edu.idatt.mappe.models.Tile;
 import idi.edu.idatt.mappe.models.tileaction.TileAction;
 
 /**
