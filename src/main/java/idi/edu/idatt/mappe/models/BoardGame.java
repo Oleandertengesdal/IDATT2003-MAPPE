@@ -5,7 +5,7 @@ import idi.edu.idatt.mappe.models.dice.Dice;
 import java.util.ArrayList;
 import java.util.List;
 
-public class BoardGame {
+public abstract class BoardGame {
     private Board board;
     private Player currentPlayer;
     private List<Player> players;
@@ -163,4 +163,6 @@ public class BoardGame {
         }
         player.placeOnTile(board.getTile(newIndex));
     }
+
+    public abstract void addPlayerBoard();
 }
