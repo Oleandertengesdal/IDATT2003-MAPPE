@@ -27,6 +27,10 @@ public class BoardgameApp {
             System.out.println("Name: " + player.getName());
         }
 
+        for (Player player : game.getPlayers()) {
+            System.out.println("Player " + player.getName() + " is at tile " + player.getCurrentTile().getIndex());
+        }
+
         // Play the game
         int roundCounter = 1;
         while (!game.getWinner()) {
