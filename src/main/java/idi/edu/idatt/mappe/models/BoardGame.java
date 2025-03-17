@@ -5,11 +5,12 @@ import idi.edu.idatt.mappe.models.dice.Dice;
 import java.util.ArrayList;
 import java.util.List;
 
-public abstract class BoardGame {
+public class BoardGame {
     private Board board;
     private Player currentPlayer;
     private List<Player> players;
     private Dice dice;
+    private boolean finished = false;
 
     /**
      * Creates a new board game with no players
@@ -109,6 +110,7 @@ public abstract class BoardGame {
     public void addPlayer(Player player) {
         players.add(player);
         player.setGame(this);
+        player.placeOnTile(board.getTile(1));
     }
 
 
@@ -120,17 +122,28 @@ public abstract class BoardGame {
         movePlayer(currentPlayer, steps);
     }
 
+    public void playOneRound() {
+        for (Player player : players) {
+            int steps = dice.roll();
+            movePlayer(player, steps);
+            if (player.getCurrentTile().getIndex() == board.getTiles().size()) {
+                finished = true;
+                break;
+            }
+        }
+    }
+
     /**
      * Gets the winner of the game
      */
-    public boolean getWinner() {
+    public Player getWinner() {
         for (Player player : players) {
             if (player.getCurrentTile().getIndex() == board.getTiles().size()) {
                 System.out.println(player.getName() + " is the winner!");
-                return true;
+                return player;
             }
         }
-        return false;
+        return null;
     }
 
     /**
@@ -149,20 +162,15 @@ public abstract class BoardGame {
      * @param steps The number of steps to move
      */
     public void movePlayer(Player player, int steps) {
-        Tile currentTile = player.getCurrentTile();
-        int currentIndex = 0;
-        for (int i = 1; i <= board.getTiles().size(); i++) {
-            if (board.getTile(i).equals(currentTile)) {
-                currentIndex = i;
-                break;
-            }
-        }
+        int currentIndex = player.getCurrentTile().getIndex();
         int newIndex = currentIndex + steps;
-        if (newIndex >= board.getTiles().size()) {
+        if (newIndex > board.getTiles().size()) {
             newIndex = board.getTiles().size();
         }
         player.placeOnTile(board.getTile(newIndex));
     }
 
-    public abstract void addPlayerBoard();
+    public boolean isFinished() {
+        return finished;
+    }
 }

@@ -1,4 +1,4 @@
-package idi.edu.idatt.mappe.models.games;
+/*package idi.edu.idatt.mappe.models.games;
 
 import idi.edu.idatt.mappe.models.BoardGame;
 import idi.edu.idatt.mappe.models.Player;
@@ -25,7 +25,7 @@ public class SnakesAndLadders extends BoardGame {
     private static Logger logger = Logger.getLogger(SnakesAndLadders.class.getName());
     /**
      * Creates a new snakes and ladders game
-     */
+     *//*
     public SnakesAndLadders() {
         super();
         createBoard(BOARD_SIZE); // Standard board size
@@ -41,7 +41,7 @@ public class SnakesAndLadders extends BoardGame {
 
     /**
      * Sets up the board with snakes and ladders
-     */
+     *//*
     private void setupBoard() {
         int numberOfSnakes = 6;
         int numberOfLadders = 6;
@@ -66,7 +66,7 @@ public class SnakesAndLadders extends BoardGame {
      * @param count The number of positions to generate
      * @param isSnake Whether the positions are for snakes or ladders
      * @return The generated positions
-     */
+     *//*
     private List<int[]> generatePositions(int count, boolean isSnake) {
         int maxRows = BOARD_SIZE / NUMBER_OF_COLLUMS;
         int minLength = 2;
@@ -93,7 +93,7 @@ public class SnakesAndLadders extends BoardGame {
      *
      * @param maxRows The maximum number of rows
      * @return The generated start position
-     */
+     *//*
     private int generateStartPosition(int maxRows) {
         int startRow = random.nextInt(maxRows) + 1;
         int startCol = random.nextInt(NUMBER_OF_COLLUMS);
@@ -108,7 +108,7 @@ public class SnakesAndLadders extends BoardGame {
      * @param maxLength The maximum length of the snake or ladder
      * @param isSnake Whether the position is for a snake or ladder
      * @return The generated end position
-     */
+     *//*
     private int generateEndPosition(int start, int minLength, int maxLength, boolean isSnake) {
         int length;
 
@@ -142,7 +142,7 @@ public class SnakesAndLadders extends BoardGame {
      * @param end The end position
      * @param positions The existing positions
      * @return Whether the position is valid
-     */
+     *//*
     private boolean isValidPosition(int start, int end, List<int[]> positions) {
         if (end < 1 || end > BOARD_SIZE || start == end) return false;
 
@@ -160,7 +160,7 @@ public class SnakesAndLadders extends BoardGame {
      *
      * @param start The start of the snake
      * @param end The end of the snake
-     */
+     *//*
     private void setSnake(int start, int end) {
         Tile startTile = getBoard().getTile(start);
         Tile endTile = getBoard().getTile(end);
@@ -176,7 +176,7 @@ public class SnakesAndLadders extends BoardGame {
      *
      * @param start The start of the ladder
      * @param end The end of the ladder
-     */
+     *//*
     private void setLadder(int start, int end) {
         Tile startTile = getBoard().getTile(start);
         Tile endTile = getBoard().getTile(end);
@@ -190,7 +190,7 @@ public class SnakesAndLadders extends BoardGame {
 
     /**
      * Plays a round of the game
-     */
+     *//*
     public void playRound() {
         for (Player player : getPlayers()) {
             int steps = dice.roll();
@@ -202,7 +202,7 @@ public class SnakesAndLadders extends BoardGame {
 
     /**
      * Moves a player a given number of steps
-     */
+     *//*
 
     @Override
     public void addPlayerBoard() {
@@ -214,3 +214,4 @@ public class SnakesAndLadders extends BoardGame {
         startTile.setNextTile(getBoard().getTile(1));
     }
 }
+*/
