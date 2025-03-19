@@ -76,7 +76,9 @@ public class Dice {
      * @throws IllegalArgumentException if dieNumber is out of range.
      */
     public int getDie(int dieNumber) {
-        validateGetDice(dieNumber, dice);
+        if (dieNumber < 1 || dieNumber > dice.size()) {
+            throw new IllegalArgumentException("Invalid dice index");
+        }
         return dice.get(dieNumber - 1).getValue();
     }
 }

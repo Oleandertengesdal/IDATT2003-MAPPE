@@ -37,8 +37,8 @@ class DiceTest {
     void testGetDie() {
         //Check if all the dice are between 1 and 6.
         dice.roll();
-        for (int i = 0; i < dice.getValues().size();i++) {
-            int value = dice.getDie(i+1);
+        for (int i = 1; i <= dice.getValues().size(); i++) {
+            int value = dice.getDie(i);
             assertTrue(value >= 1 && value <= 6, "Each die value should be between 1 and 6");
         }
     }
