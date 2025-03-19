@@ -14,10 +14,10 @@ public class BoardgameApp {
     public void start() {
         this.boardGame.createBoard(90); // Creates a standard board of 90 linked tiles
         this.boardGame.createDice(2); // Creates 2 Dice
-        this.boardGame.addPlayer(new Player("Arne"));
-        this.boardGame.addPlayer(new Player("Ivar"));
-        this.boardGame.addPlayer(new Player("Majid"));
-        this.boardGame.addPlayer(new Player("Atle"));
+        this.boardGame.addPlayer(new Player("Arne", "Skateboard"));
+        this.boardGame.addPlayer(new Player("Ivar", "Hat"));
+        this.boardGame.addPlayer(new Player("Majid", "Shoe"));
+        this.boardGame.addPlayer(new Player("Atle", "Car"));
 
         // Play the game
         listPlayers();

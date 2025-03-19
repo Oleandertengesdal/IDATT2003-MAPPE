@@ -8,6 +8,7 @@ import java.util.logging.Logger;
 public class Player {
 
     private String name;
+    private String token;
     private Tile currentTile;
     private BoardGame game;
     private boolean extraThrow;
@@ -20,10 +21,15 @@ public class Player {
      *
      * @param name The name of the player
      */
-    public Player(String name) {
+    public Player(String name, String token) {
         this.name = name;
+        this.token = token;
         this.missingTurn = false;
         this.extraThrow = false;
+    }
+
+    public Player(String name) {
+        this(name, "default");
     }
 
     /**
@@ -34,6 +40,16 @@ public class Player {
     public String getName() {
         return name;
     }
+
+    /**
+     * Returns the token of the player
+     *
+     * @return The token of the player
+     */
+    public String getToken() {
+        return token;
+    }
+
 
     /**
      * Returns the current tile of the player
