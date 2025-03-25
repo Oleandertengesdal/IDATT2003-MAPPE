@@ -1,0 +1,602 @@
+{
+  "name": "Snakes Only",
+  "description": "A board game with only snakes",
+  "rows": 10,
+  "columns": 9,
+  "tiles": [
+    {
+      "id": 1,
+      "x": 0,
+      "y": 0,
+      "nextTile": 2
+    },
+    {
+      "id": 2,
+      "x": 1,
+      "y": 0,
+      "nextTile": 3
+    },
+    {
+      "id": 3,
+      "x": 2,
+      "y": 0,
+      "nextTile": 4
+    },
+    {
+      "id": 4,
+      "x": 3,
+      "y": 0,
+      "nextTile": 5
+    },
+    {
+      "id": 5,
+      "x": 4,
+      "y": 0,
+      "nextTile": 6
+    },
+    {
+      "id": 6,
+      "x": 5,
+      "y": 0,
+      "nextTile": 7
+    },
+    {
+      "id": 7,
+      "x": 6,
+      "y": 0,
+      "nextTile": 8
+    },
+    {
+      "id": 8,
+      "x": 7,
+      "y": 0,
+      "nextTile": 9
+    },
+    {
+      "id": 9,
+      "x": 8,
+      "y": 0,
+      "nextTile": 10
+    },
+    {
+      "id": 10,
+      "x": 8,
+      "y": 1,
+      "nextTile": 11
+    },
+    {
+      "id": 11,
+      "x": 7,
+      "y": 1,
+      "nextTile": 12
+    },
+    {
+      "id": 12,
+      "x": 6,
+      "y": 1,
+      "nextTile": 13
+    },
+    {
+      "id": 13,
+      "x": 5,
+      "y": 1,
+      "nextTile": 14
+    },
+    {
+      "id": 14,
+      "x": 4,
+      "y": 1,
+      "nextTile": 15,
+      "action": {
+        "type": "SnakeAction",
+        "destinationTileId": 4,
+        "description": "Slide down a small snake"
+      }
+    },
+    {
+      "id": 15,
+      "x": 3,
+      "y": 1,
+      "nextTile": 16
+    },
+    {
+      "id": 16,
+      "x": 2,
+      "y": 1,
+      "nextTile": 17
+    },
+    {
+      "id": 17,
+      "x": 1,
+      "y": 1,
+      "nextTile": 18
+    },
+    {
+      "id": 18,
+      "x": 0,
+      "y": 1,
+      "nextTile": 19
+    },
+    {
+      "id": 19,
+      "x": 0,
+      "y": 2,
+      "nextTile": 20
+    },
+    {
+      "id": 20,
+      "x": 1,
+      "y": 2,
+      "nextTile": 21
+    },
+    {
+      "id": 21,
+      "x": 2,
+      "y": 2,
+      "nextTile": 22
+    },
+    {
+      "id": 22,
+      "x": 3,
+      "y": 2,
+      "nextTile": 23,
+      "action": {
+        "type": "SnakeAction",
+        "destinationTileId": 11,
+        "description": "Slide down a green snake"
+      }
+    },
+    {
+      "id": 23,
+      "x": 4,
+      "y": 2,
+      "nextTile": 24
+    },
+    {
+      "id": 24,
+      "x": 5,
+      "y": 2,
+      "nextTile": 25
+    },
+    {
+      "id": 25,
+      "x": 6,
+      "y": 2,
+      "nextTile": 26
+    },
+    {
+      "id": 26,
+      "x": 7,
+      "y": 2,
+      "nextTile": 27
+    },
+    {
+      "id": 27,
+      "x": 8,
+      "y": 2,
+      "nextTile": 28
+    },
+    {
+      "id": 28,
+      "x": 8,
+      "y": 3,
+      "nextTile": 29
+    },
+    {
+      "id": 29,
+      "x": 7,
+      "y": 3,
+      "nextTile": 30
+    },
+    {
+      "id": 30,
+      "x": 6,
+      "y": 3,
+      "nextTile": 31
+    },
+    {
+      "id": 31,
+      "x": 5,
+      "y": 3,
+      "nextTile": 32,
+      "action": {
+        "type": "SnakeAction",
+        "destinationTileId": 16,
+        "description": "Slide down a cobra"
+      }
+    },
+    {
+      "id": 32,
+      "x": 4,
+      "y": 3,
+      "nextTile": 33
+    },
+    {
+      "id": 33,
+      "x": 3,
+      "y": 3,
+      "nextTile": 34
+    },
+    {
+      "id": 34,
+      "x": 2,
+      "y": 3,
+      "nextTile": 35
+    },
+    {
+      "id": 35,
+      "x": 1,
+      "y": 3,
+      "nextTile": 36
+    },
+    {
+      "id": 36,
+      "x": 0,
+      "y": 3,
+      "nextTile": 37
+    },
+    {
+      "id": 37,
+      "x": 0,
+      "y": 4,
+      "nextTile": 38
+    },
+    {
+      "id": 38,
+      "x": 1,
+      "y": 4,
+      "nextTile": 39,
+      "action": {
+        "type": "SnakeAction",
+        "destinationTileId": 9,
+        "description": "Slide down a garden snake"
+      }
+    },
+    {
+      "id": 39,
+      "x": 2,
+      "y": 4,
+      "nextTile": 40
+    },
+    {
+      "id": 40,
+      "x": 3,
+      "y": 4,
+      "nextTile": 41
+    },
+    {
+      "id": 41,
+      "x": 4,
+      "y": 4,
+      "nextTile": 42
+    },
+    {
+      "id": 42,
+      "x": 5,
+      "y": 4,
+      "nextTile": 43
+    },
+    {
+      "id": 43,
+      "x": 6,
+      "y": 4,
+      "nextTile": 44
+    },
+    {
+      "id": 44,
+      "x": 7,
+      "y": 4,
+      "nextTile": 45
+    },
+    {
+      "id": 45,
+      "x": 8,
+      "y": 4,
+      "nextTile": 46
+    },
+    {
+      "id": 46,
+      "x": 8,
+      "y": 5,
+      "nextTile": 47
+    },
+    {
+      "id": 47,
+      "x": 7,
+      "y": 5,
+      "nextTile": 48
+    },
+    {
+      "id": 48,
+      "x": 6,
+      "y": 5,
+      "nextTile": 49,
+      "action": {
+        "type": "SnakeAction",
+        "destinationTileId": 26,
+        "description": "Slide down a python"
+      }
+    },
+    {
+      "id": 49,
+      "x": 5,
+      "y": 5,
+      "nextTile": 50
+    },
+    {
+      "id": 50,
+      "x": 4,
+      "y": 5,
+      "nextTile": 51
+    },
+    {
+      "id": 51,
+      "x": 3,
+      "y": 5,
+      "nextTile": 52
+    },
+    {
+      "id": 52,
+      "x": 2,
+      "y": 5,
+      "nextTile": 53
+    },
+    {
+      "id": 53,
+      "x": 1,
+      "y": 5,
+      "nextTile": 54
+    },
+    {
+      "id": 54,
+      "x": 0,
+      "y": 5,
+      "nextTile": 55
+    },
+    {
+      "id": 55,
+      "x": 0,
+      "y": 6,
+      "nextTile": 56
+    },
+    {
+      "id": 56,
+      "x": 1,
+      "y": 6,
+      "nextTile": 57,
+      "action": {
+        "type": "SnakeAction",
+        "destinationTileId": 33,
+        "description": "Slide down a viper"
+      }
+    },
+    {
+      "id": 57,
+      "x": 2,
+      "y": 6,
+      "nextTile": 58
+    },
+    {
+      "id": 58,
+      "x": 3,
+      "y": 6,
+      "nextTile": 59
+    },
+    {
+      "id": 59,
+      "x": 4,
+      "y": 6,
+      "nextTile": 60
+    },
+    {
+      "id": 60,
+      "x": 5,
+      "y": 6,
+      "nextTile": 61
+    },
+    {
+      "id": 61,
+      "x": 6,
+      "y": 6,
+      "nextTile": 62
+    },
+    {
+      "id": 62,
+      "x": 7,
+      "y": 6,
+      "nextTile": 63,
+      "action": {
+        "type": "SnakeAction",
+        "destinationTileId": 42,
+        "description": "Slide down an anaconda"
+      }
+    },
+    {
+      "id": 63,
+      "x": 8,
+      "y": 6,
+      "nextTile": 64
+    },
+    {
+      "id": 64,
+      "x": 8,
+      "y": 7,
+      "nextTile": 65
+    },
+    {
+      "id": 65,
+      "x": 7,
+      "y": 7,
+      "nextTile": 66
+    },
+    {
+      "id": 66,
+      "x": 6,
+      "y": 7,
+      "nextTile": 67
+    },
+    {
+      "id": 67,
+      "x": 5,
+      "y": 7,
+      "nextTile": 68
+    },
+    {
+      "id": 68,
+      "x": 4,
+      "y": 7,
+      "nextTile": 69
+    },
+    {
+      "id": 69,
+      "x": 3,
+      "y": 7,
+      "nextTile": 70
+    },
+    {
+      "id": 70,
+      "x": 2,
+      "y": 7,
+      "nextTile": 71
+    },
+    {
+      "id": 71,
+      "x": 1,
+      "y": 7,
+      "nextTile": 72
+    },
+    {
+      "id": 72,
+      "x": 0,
+      "y": 7,
+      "nextTile": 73
+    },
+    {
+      "id": 73,
+      "x": 0,
+      "y": 8,
+      "nextTile": 74
+    },
+    {
+      "id": 74,
+      "x": 1,
+      "y": 8,
+      "nextTile": 75,
+      "action": {
+        "type": "SnakeAction",
+        "destinationTileId": 58,
+        "description": "Slide down a rattlesnake"
+      }
+    },
+    {
+      "id": 75,
+      "x": 2,
+      "y": 8,
+      "nextTile": 76
+    },
+    {
+      "id": 76,
+      "x": 3,
+      "y": 8,
+      "nextTile": 77
+    },
+    {
+      "id": 77,
+      "x": 4,
+      "y": 8,
+      "nextTile": 78
+    },
+    {
+      "id": 78,
+      "x": 5,
+      "y": 8,
+      "nextTile": 79,
+      "action": {
+        "type": "SnakeAction",
+        "destinationTileId": 69,
+        "description": "Slide down a tiny snake"
+      }
+    },
+    {
+      "id": 79,
+      "x": 6,
+      "y": 8,
+      "nextTile": 80
+    },
+    {
+      "id": 80,
+      "x": 7,
+      "y": 8,
+      "nextTile": 81
+    },
+    {
+      "id": 81,
+      "x": 8,
+      "y": 8,
+      "nextTile": 82
+    },
+    {
+      "id": 82,
+      "x": 8,
+      "y": 9,
+      "nextTile": 83
+    },
+    {
+      "id": 83,
+      "x": 7,
+      "y": 9,
+      "nextTile": 84
+    },
+    {
+      "id": 84,
+      "x": 6,
+      "y": 9,
+      "nextTile": 85
+    },
+    {
+      "id": 85,
+      "x": 5,
+      "y": 9,
+      "nextTile": 86,
+      "action": {
+        "type": "SnakeAction",
+        "destinationTileId": 61,
+        "description": "Slide down a huge snake"
+      }
+    },
+    {
+      "id": 86,
+      "x": 4,
+      "y": 9,
+      "nextTile": 87
+    },
+    {
+      "id": 87,
+      "x": 3,
+      "y": 9,
+      "nextTile": 88
+    },
+    {
+      "id": 88,
+      "x": 2,
+      "y": 9,
+      "nextTile": 89,
+      "action": {
+        "type": "SnakeAction",
+        "destinationTileId": 52,
+        "description": "Slide down a king cobra"
+      }
+    },
+    {
+      "id": 89,
+      "x": 1,
+      "y": 9,
+      "nextTile": 90
+    },
+    {
+      "id": 90,
+      "x": 0,
+      "y": 9
+    }
+  ]
+}
