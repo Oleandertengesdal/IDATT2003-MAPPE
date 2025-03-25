@@ -31,64 +31,64 @@ class BoardTest {
     }
 
     @Test
-    void testGetTile() {
-        assertEquals(1, board.getTile(1).getIndex());
-        assertEquals(100, board.getTile(100).getIndex());
+    void testGetTileByIndex() {
+        assertEquals(1, board.getTileByIndex(1).getIndex());
+        assertEquals(100, board.getTileByIndex(100).getIndex());
     }
 
     @Test
-    void testGetTileOutOfBounds() {
-        assertThrows(IndexOutOfBoundsException.class, () -> board.getTile(101));
+    void testGetTileByIndexOutOfBounds() {
+        assertThrows(IndexOutOfBoundsException.class, () -> board.getTileByIndex(101));
     }
 
     @Test
-    void testGetTileNegative() {
-        assertThrows(IndexOutOfBoundsException.class, () -> board.getTile(-1));
+    void testGetTileByIndexNegative() {
+        assertThrows(IndexOutOfBoundsException.class, () -> board.getTileByIndex(-1));
     }
 
     @Test
-    void testGetTileAction() {
+    void testGetTileByIndexAction() {
         TileAction action = new LadderTileAction(10, "Test", board);
-        board.getTile(10).setLandAction(action);
-        assertEquals(action, board.getTile(10).getLandAction());
+        board.getTileByIndex(10).setLandAction(action);
+        assertEquals(action, board.getTileByIndex(10).getLandAction());
     }
 
     @Test
-    void testGetTileActionNull() {
-        assertNull(board.getTile(10).getLandAction());
+    void testGetTileByIndexActionNull() {
+        assertNull(board.getTileByIndex(10).getLandAction());
     }
 
     @Test
-    void testGetTileActionOutOfBounds() {
-        assertThrows(IndexOutOfBoundsException.class, () -> board.getTile(101).getLandAction());
+    void testGetTileByIndexActionOutOfBounds() {
+        assertThrows(IndexOutOfBoundsException.class, () -> board.getTileByIndex(101).getLandAction());
     }
 
     @Test
-    void testGetTileActionNegative() {
-        assertThrows(IndexOutOfBoundsException.class, () -> board.getTile(-1).getLandAction());
+    void testGetTileByIndexActionNegative() {
+        assertThrows(IndexOutOfBoundsException.class, () -> board.getTileByIndex(-1).getLandAction());
     }
 
     @Test
-    void testGetTileActionOutOfBoundsSet() {
-        assertThrows(IndexOutOfBoundsException.class, () -> board.getTile(101).setLandAction(new LadderTileAction(10, "Test", board)));
+    void testGetTileByIndexActionOutOfBoundsSet() {
+        assertThrows(IndexOutOfBoundsException.class, () -> board.getTileByIndex(101).setLandAction(new LadderTileAction(10, "Test", board)));
     }
 
     @Test
-    void testGetTileActionNegativeSet() {
-        assertThrows(IndexOutOfBoundsException.class, () -> board.getTile(-1).setLandAction(new LadderTileAction(10, "Test", board)));
+    void testGetTileByIndexActionNegativeSet() {
+        assertThrows(IndexOutOfBoundsException.class, () -> board.getTileByIndex(-1).setLandAction(new LadderTileAction(10, "Test", board)));
     }
 
     @Test
-    void testGetTileActionSet() {
+    void testGetTileByIndexActionSet() {
         TileAction action = new LadderTileAction(10, "Test", board);
-        board.getTile(10).setLandAction(action);
-        assertEquals(action, board.getTile(10).getLandAction());
+        board.getTileByIndex(10).setLandAction(action);
+        assertEquals(action, board.getTileByIndex(10).getLandAction());
     }
 
     @Test
-    void testGetTileActionSetNull() {
-        board.getTile(10).setLandAction(null);
-        assertNull(board.getTile(10).getLandAction());
+    void testGetTileByIndexActionSetNull() {
+        board.getTileByIndex(10).setLandAction(null);
+        assertNull(board.getTileByIndex(10).getLandAction());
     }
 
 }
