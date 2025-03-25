@@ -1,5 +1,6 @@
 package idi.edu.idatt.mappe.models.tileaction;
 
+import idi.edu.idatt.mappe.models.Board;
 import idi.edu.idatt.mappe.models.Player;
 
 /**
@@ -11,13 +12,15 @@ import idi.edu.idatt.mappe.models.Player;
 public class MissingTurnTileAction implements TileAction {
 
     private final String description;
+    private final Board board;
 
     /**
      * Creates a new missing turn tile action
      */
-    public MissingTurnTileAction(String description) {
+    public MissingTurnTileAction(String description, Board board) {
         super();
         this.description = description;
+        this.board = board;
     }
 
     /**
@@ -38,6 +41,6 @@ public class MissingTurnTileAction implements TileAction {
      */
     @Override
     public void perform(Player player) {
-        // player.setMissingTurn(true);
+        //player.setMissingTurn(true);
     }
 }

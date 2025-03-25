@@ -5,6 +5,7 @@ import idi.edu.idatt.mappe.exceptions.TileActionNotFoundException;
 import idi.edu.idatt.mappe.files.writer.BoardFileWriter;
 import idi.edu.idatt.mappe.files.writer.BoardFileWriterGson;
 import idi.edu.idatt.mappe.models.Board;
+import idi.edu.idatt.mappe.models.BoardGame;
 import idi.edu.idatt.mappe.models.Player;
 import idi.edu.idatt.mappe.models.Tile;
 import idi.edu.idatt.mappe.models.tileaction.*;
@@ -13,6 +14,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
+import java.util.logging.Logger;
 
 /**
  * Factory for creating different board game JSON files
@@ -23,24 +25,27 @@ public class BoardGameFileFactory {
     private static final int COLUMNS = 9;
     private static final Random random = new Random();
 
+    private static Logger logger  = Logger.getLogger(BoardGameFileFactory.class.getName());
+
     /**
      * Main method to generate 6 different board game files
      */
     public static void main(String[] args) {
         BoardFileWriter writer = new BoardFileWriterGson();
 
+
         try {
             // Generate 6 different game boards
-            writer.writeBoard(createClassicSnakesAndLadders(), "classic_board.json");
-            writer.writeBoard(createSnakesOnlyBoard(), "snakes_only_board.json");
-            writer.writeBoard(createLaddersOnlyBoard(), "ladders_only_board.json");
-            writer.writeBoard(createRandomTeleportBoard(), "random_teleport_board.json");
-            writer.writeBoard(createMixedActionBoard(), "mixed_action_board.json");
-            writer.writeBoard(createChaosBoard(), "chaos_board.json");
+            writer.writeBoard(createClassicSnakesAndLadders(), "boards/classic_board.json", "Classic Snakes and Ladders", "A classic board game with snakes and ladders");
+            writer.writeBoard(createSnakesOnlyBoard(), "boards/snakes_only_board.json", "Snakes Only", "A board game with only snakes");
+            writer.writeBoard(createLaddersOnlyBoard(), "boards/ladders_only_board.json", "Ladders Only", "A board game with only ladders");
+            writer.writeBoard(createRandomTeleportBoard(), "boards/random_teleport_board.json", "Random Teleport", "A board game with random teleport tiles");
+            writer.writeBoard(createMixedActionBoard(), "boards/mixed_action_board.json", "Mixed Actions", "A board game with a mix of actions");
+            writer.writeBoard(createChaosBoard(), "boards/chaos_board.json", "Chaos Board", "A board game with chaos and confusion");
 
-            System.out.println("Successfully generated 6 board game JSON files.");
-        } catch (IOException | TileActionNotFoundException | JsonParsingException e) {
-            System.err.println("Error generating board game files: " + e.getMessage());
+            logger.info("Board game files generated successfully!");
+        } catch (IOException | TileActionNotFoundException e) {
+            logger.severe("An error occurred while generating board game files: " + e.getMessage());
             e.printStackTrace();
         }
     }
@@ -69,9 +74,8 @@ public class BoardGameFileFactory {
         addTileAction(board, 62, 19, "Slide down a cobra", false);
         addTileAction(board, 64, 60, "Slide down a garden snake", false);
         addTileAction(board, 87, 24, "Slide down a python", false);
-        addTileAction(board, 93, 73, "Slide down a viper", false);
-        addTileAction(board, 95, 75, "Slide down an anaconda", false);
-        addTileAction(board, 99, 78, "Slide down a rattlesnake", false);
+        addTileAction(board, 73, 51, "Slide down a viper", false);
+        addTileAction(board, 85, 72, "Slide down an anaconda", false);
 
         return board;
     }
@@ -175,18 +179,13 @@ public class BoardGameFileFactory {
         RandomTeleportTileAction action2 = new RandomTeleportTileAction(board, "Magic portal teleport!");
         tile2.setLandAction(action2);
 
-        // Creating mock players for swap tile actions - in a real implementation, these would be passed from the game
-        List<Player> mockPlayers = new ArrayList<>();
-        mockPlayers.add(new Player("Player1"));
-        mockPlayers.add(new Player("Player2"));
-
         // Add swap tile actions
         Tile tile3 = board.getTileByIndex(42);
-        SwapTileAction action3 = new SwapTileAction(mockPlayers, "Swap positions with a random player!");
+        SwapTileAction action3 = new SwapTileAction(new BoardGame(), "Swap positions with a random player!");
         tile3.setLandAction(action3);
 
         Tile tile4 = board.getTileByIndex(78);
-        SwapTileAction action4 = new SwapTileAction(mockPlayers, "Cosmic swap! Trade places with someone else.");
+        SwapTileAction action4 = new SwapTileAction(new BoardGame(), "Cosmic swap! Trade places with someone else.");
         tile4.setLandAction(action4);
 
         return board;
@@ -201,13 +200,6 @@ public class BoardGameFileFactory {
         // Create all tiles
         createStandardTiles(board);
 
-        // Creating mock players for swap tile actions
-        List<Player> mockPlayers = new ArrayList<>();
-        mockPlayers.add(new Player("Player1"));
-        mockPlayers.add(new Player("Player2"));
-        mockPlayers.add(new Player("Player3"));
-
-        // Add a mix of all available actions
         // Ladders
         addTileAction(board, 3, 21, "Rocket ladder! Zoom up!", true);
         addTileAction(board, 24, 58, "Elevator going up!", true);
@@ -226,19 +218,13 @@ public class BoardGameFileFactory {
         // Swap tile actions
         for (int i = 10; i < 85; i += 25) {
             Tile tile = board.getTileByIndex(i);
-            SwapTileAction action = new SwapTileAction(mockPlayers, "Body swap! Trade places with someone else!");
+            SwapTileAction action = new SwapTileAction(new BoardGame(), "Body swap! Trade places with someone else!");
             tile.setLandAction(action);
         }
 
         // Add bonus tile actions (these are placeholders as they would need implementation)
         Tile bonusTile1 = board.getTileByIndex(33);
-        bonusTile1.setLandAction(new FreeTurnTileAction("Free turn! Roll again!"));
-
-        Tile bonusTile2 = board.getTileByIndex(67);
-        bonusTile2.setLandAction(new DoubleMoveActionTile("Double move! Move twice the dice value!"));
-
-        Tile bonusTile3 = board.getTileByIndex(44);
-        bonusTile3.setLandAction(new ReverseDirectionTileAction("Reverse! Start moving backwards!"));
+        bonusTile1.setLandAction(new ExtraThrowTileAction("Free turn! Roll again!", board));
 
         return board;
     }
@@ -288,66 +274,4 @@ public class BoardGameFileFactory {
         }
     }
 
-    /**
-     * Custom tile action: Free turn
-     */
-    private static class FreeTurnTileAction implements TileAction {
-        private String description;
-
-        public FreeTurnTileAction(String description) {
-            this.description = description;
-        }
-
-        @Override
-        public void perform(Player player) {
-            // In a real implementation, this would signal the game logic to grant another turn
-            System.out.println(player.getName() + " gets a free turn!");
-        }
-
-        public String getDescription() {
-            return description;
-        }
-    }
-
-    /**
-     * Custom tile action: Double Move
-     */
-    private static class DoubleMoveActionTile implements TileAction {
-        private String description;
-
-        public DoubleMoveActionTile(String description) {
-            this.description = description;
-        }
-
-        @Override
-        public void perform(Player player) {
-            // In a real implementation, this would signal the game to move the player again
-            System.out.println(player.getName() + " gets to move twice the dice value!");
-        }
-
-        public String getDescription() {
-            return description;
-        }
-    }
-
-    /**
-     * Custom tile action: Reverse Direction
-     */
-    private static class ReverseDirectionTileAction implements TileAction {
-        private String description;
-
-        public ReverseDirectionTileAction(String description) {
-            this.description = description;
-        }
-
-        @Override
-        public void perform(Player player) {
-            // In a real implementation, this would signal the game to reverse movement direction
-            System.out.println(player.getName() + " now moves backwards!");
-        }
-
-        public String getDescription() {
-            return description;
-        }
-    }
 }

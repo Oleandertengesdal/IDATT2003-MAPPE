@@ -6,6 +6,7 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import idi.edu.idatt.mappe.exceptions.JsonParsingException;
 import idi.edu.idatt.mappe.models.Board;
+import idi.edu.idatt.mappe.models.BoardGame;
 import idi.edu.idatt.mappe.models.Tile;
 import idi.edu.idatt.mappe.models.tileaction.*;
 
@@ -25,7 +26,6 @@ public class BoardFileReaderGson implements BoardFileReader {
      * @param fileName The name of the file to read from
      * @return The board read from the file
      * @throws JsonParsingException If a JSON parsing error occurs
-     * @throws IOException If an I/O error occurs
      */
     @Override
     public Board readBoard(String fileName) throws JsonParsingException {
@@ -82,6 +82,10 @@ public class BoardFileReaderGson implements BoardFileReader {
                         case "LadderAction" -> new LadderTileAction(destinationTileId, description, board);
                         case "SnakeAction" -> new SnakeTileAction(destinationTileId, description, board);
                         case "RandomTeleportAction" -> new RandomTeleportTileAction(board, description);
+                        case "SwapAction" -> new SwapTileAction(new BoardGame(), description);
+                        case "ExtraThrowAction" -> new ExtraThrowTileAction(description, board);
+                        case "MissingTurnAction" -> new MissingTurnTileAction(description, board);
+                        case "GoToJailAction" -> new GoToJailTileAction(description, board);
                         default -> throw new JsonParsingException("Unknown action type: " + actionType);
                     };
 

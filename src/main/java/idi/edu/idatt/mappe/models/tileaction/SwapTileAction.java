@@ -1,5 +1,7 @@
 package idi.edu.idatt.mappe.models.tileaction;
 
+import idi.edu.idatt.mappe.models.Board;
+import idi.edu.idatt.mappe.models.BoardGame;
 import idi.edu.idatt.mappe.models.Player;
 import idi.edu.idatt.mappe.models.Tile;
 
@@ -14,18 +16,18 @@ import java.util.Random;
 public class SwapTileAction implements TileAction {
 
     private String description;
-    private List<Player> players;
+    private BoardGame game;
     private Random random;
 
     /**
      * Creates a new swap tile action
      *
      * @param description The description of the action
-     * @param players The players to swap
+     * @param game The Boardgame
      */
-    public SwapTileAction(List<Player> players, String description) {
+    public SwapTileAction(BoardGame game, String description) {
         this.description = description;
-        this.players = players;
+        this.game = game;
         this.random = new Random();
     }
 
@@ -39,14 +41,36 @@ public class SwapTileAction implements TileAction {
     }
 
     /**
+     * Returns the game of the action
+     *
+     * @return The game of the action
+     */
+    public BoardGame getGame() {
+        return game;
+    }
+
+    public void setGame(BoardGame game) {
+        this.game = game;
+    }
+
+    /**
      * Swaps the position of the players
      */
     @Override
     public void perform(Player player) {
-        Tile playerTile = player.getCurrentTile();
-        Player randomPlayer = players.get(random.nextInt(players.size() - 1));
-        Tile randomPlayerTile = randomPlayer.getCurrentTile();
-        player.placeOnTile(randomPlayerTile);
-        randomPlayer.placeOnTile(playerTile);
+        List<Player> players = game.getPlayers();
+        if (players.size() > 1) {
+            Player otherPlayer;
+            do {
+                otherPlayer = players.get(random.nextInt(players.size()));
+            } while (otherPlayer == player);
+
+            // Swap positions
+            int playerTileIndex = player.getCurrentTile().getIndex();
+            int otherPlayerTileIndex = otherPlayer.getCurrentTile().getIndex();
+
+            player.placeOnTile(game.getBoard().getTileByIndex(otherPlayerTileIndex));
+            otherPlayer.placeOnTile(game.getBoard().getTileByIndex(playerTileIndex));
+        }
     }
 }

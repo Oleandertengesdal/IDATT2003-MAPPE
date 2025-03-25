@@ -1,6 +1,7 @@
 package idi.edu.idatt.mappe.files.writer;
 
 import com.google.gson.*;
+import idi.edu.idatt.mappe.exceptions.JsonParsingException;
 import idi.edu.idatt.mappe.exceptions.TileActionNotFoundException;
 import idi.edu.idatt.mappe.models.Board;
 import idi.edu.idatt.mappe.models.Tile;
@@ -42,6 +43,11 @@ import java.util.Map;
  */
 public class BoardFileWriterGson implements BoardFileWriter {
 
+    @Override
+    public void writeBoard(Board board, String filePath) throws JsonParsingException, IOException, TileActionNotFoundException {
+        writeBoard(board, filePath, "Game Board", "A game board with tiles and actions");
+    }
+
     /**
      * Writes a board to a JSON file
      *
@@ -50,8 +56,8 @@ public class BoardFileWriterGson implements BoardFileWriter {
      * @throws IOException If an I/O error occurs
      */
     @Override
-    public void writeBoard(Board board, String fileName) throws JsonParseException, IOException, TileActionNotFoundException {
-        JsonObject boardJson = serializeBoard(board);
+    public void writeBoard(Board board, String fileName, String name, String description) throws JsonParseException, IOException, TileActionNotFoundException {
+        JsonObject boardJson = serializeBoard(board, name, description);
 
         // Write the JSON to a file
         Gson gson = new GsonBuilder().setPrettyPrinting().create();
@@ -68,10 +74,10 @@ public class BoardFileWriterGson implements BoardFileWriter {
      * @param board The board to serialize
      * @return A JsonObject representing the board
      */
-    private JsonObject serializeBoard(Board board) throws TileActionNotFoundException {
+    private JsonObject serializeBoard(Board board, String name, String description) throws TileActionNotFoundException {
         JsonObject boardJson = new JsonObject();
-        boardJson.addProperty("name", "Game Board");
-        boardJson.addProperty("description", "A game board with tiles and actions");
+        boardJson.addProperty("name", name);
+        boardJson.addProperty("description", description);
 
         // Add board dimensions
         boardJson.addProperty("rows", board.getRows());
@@ -132,6 +138,22 @@ public class BoardFileWriterGson implements BoardFileWriter {
             actionJson.addProperty("type", "RandomTeleportAction");
             actionJson.addProperty("description", randomTeleportTileAction.getDescription());
             actionJson.addProperty("destinationTileId", -1); // Placeholder for random teleport
+        } else if (action instanceof SwapTileAction swapTileAction) {
+            actionJson.addProperty("type", "SwapAction");
+            actionJson.addProperty("description", swapTileAction.getDescription());
+            actionJson.addProperty("destinationTileId", -1); // Placeholder for swap
+        } else if (action instanceof MissingTurnTileAction missingTurnTileAction) {
+            actionJson.addProperty("type", "MissingTurnAction");
+            actionJson.addProperty("description", missingTurnTileAction.getDescription());
+            actionJson.addProperty("destinationTileId", -1); // Placeholder for missing turn
+        } else if (action instanceof GoToJailTileAction goToJailTileAction) {
+            actionJson.addProperty("type", "GoToJailAction");
+            actionJson.addProperty("description", goToJailTileAction.getDescription());
+            actionJson.addProperty("destinationTileId", -1); // Placeholder for go to jail
+        } else if (action instanceof ExtraThrowTileAction extraThrowTileAction) {
+            actionJson.addProperty("type", "ExtraThrowAction");
+            actionJson.addProperty("description", extraThrowTileAction.getDescription());
+            actionJson.addProperty("destinationTileId", -1); // Placeholder for extra throw
         } else {
             throw new TileActionNotFoundException("Unknown action type: " + action.getClass().getName());
         }

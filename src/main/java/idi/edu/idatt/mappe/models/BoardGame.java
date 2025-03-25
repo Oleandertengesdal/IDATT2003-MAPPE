@@ -10,7 +10,12 @@ public class BoardGame {
     private Player currentPlayer;
     private List<Player> players;
     private Dice dice;
+    private GameState gameState = GameState.NOT_STARTED;
     private boolean finished = false;
+
+    //List to store observers
+    private List<BoardGameObserver> observers = new ArrayList<>();
+
 
     /**
      * Creates a new board game with no players
@@ -122,10 +127,14 @@ public class BoardGame {
         movePlayer(currentPlayer, steps);
     }
 
+    /**
+     * Plays one round of the game
+     */
     public void playOneRound() {
         for (Player player : players) {
             int steps = dice.roll();
             movePlayer(player, steps);
+
             if (player.getCurrentTile().getIndex() == board.getTiles().size()) {
                 finished = true;
                 break;
@@ -153,6 +162,7 @@ public class BoardGame {
         for (Player player : players) {
             player.placeOnTile(board.getTileByIndex(1));
         }
+        notifyGameStateChanged(GameState.STARTED);
     }
 
     /**
@@ -168,9 +178,78 @@ public class BoardGame {
             newIndex = board.getTiles().size();
         }
         player.placeOnTile(board.getTileByIndex(newIndex));
+
+        // Notify observers about the move
+        notifyPlayerMoved(player, steps);
+
+        // Check for game completion
+        if (player.getCurrentTile().getIndex() == board.getTiles().size()) {
+            finished = true;
+            Player winner = getWinner();
+            if (winner != null) {
+                notifyGameWinner(winner);
+                notifyGameStateChanged(GameState.FINISHED);
+            }
+        }
     }
 
+
+    /**
+     * Returns whether the game is finished
+     *
+     * @return Whether the game is finished
+     */
     public boolean isFinished() {
         return finished;
+    }
+
+    /**
+     * Register an observer to receive game updates
+     * @param observer The observer to register
+     */
+    public void addObserver(BoardGameObserver observer) {
+        if (!observers.contains(observer)) {
+            observers.add(observer);
+        }
+    }
+
+    /**
+     * Remove an observer from the game
+     * @param observer The observer to remove
+     */
+    public void removeObserver(BoardGameObserver observer) {
+        observers.remove(observer);
+    }
+
+    /**
+     * Notify all observers about a player's move
+     * @param player The player who moved
+     * @param steps The number of steps moved
+     */
+    private void notifyPlayerMoved(Player player, int steps) {
+        for (BoardGameObserver observer : observers) {
+            observer.onPlayerMoved(player, steps);
+        }
+    }
+
+    /**
+     * Notify all observers about game state changes
+     * @param newState The new game state
+     */
+    private void notifyGameStateChanged(GameState newState) {
+        gameState = newState;
+        for (BoardGameObserver observer : observers) {
+            observer.onGameStateChanged(newState);
+        }
+    }
+
+    /**
+     * Notify all observers about the game winner
+     * @param winner The winning player
+     */
+    private void notifyGameWinner(Player winner) {
+        for (BoardGameObserver observer : observers) {
+            observer.onGameWinner(winner);
+        }
     }
 }

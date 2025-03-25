@@ -1,5 +1,6 @@
 package idi.edu.idatt.mappe.models.tileaction;
 
+import idi.edu.idatt.mappe.models.Board;
 import idi.edu.idatt.mappe.models.Player;
 
 /**
@@ -14,7 +15,7 @@ public class ExtraThrowTileAction implements TileAction {
     /**
      * Creates a new extra throw tile action
      */
-    public ExtraThrowTileAction(String description) {
+    public ExtraThrowTileAction(String description, Board board) {
         super();
         this.description = description;
     }
