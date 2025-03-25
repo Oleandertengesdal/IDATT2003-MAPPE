@@ -1,0 +1,55 @@
+{
+  "name": "Game Board",
+  "description": "A game board with tiles and actions",
+  "tiles": [
+    {
+      "id": 1,
+      "nextTile": 2
+    },
+    {
+      "id": 2,
+      "nextTile": 3
+    },
+    {
+      "id": 3,
+      "nextTile": 4,
+      "action": {
+        "type": "LadderAction",
+        "destinationTileId": 8,
+        "description": "Ladder from 3 to 8"
+      }
+    },
+    {
+      "id": 4,
+      "nextTile": 5
+    },
+    {
+      "id": 5,
+      "nextTile": 6
+    },
+    {
+      "id": 6,
+      "nextTile": 7
+    },
+    {
+      "id": 7,
+      "nextTile": 8,
+      "action": {
+        "type": "SnakeAction",
+        "destinationTileId": 2,
+        "description": "Snake from 7 to 2"
+      }
+    },
+    {
+      "id": 8,
+      "nextTile": 9
+    },
+    {
+      "id": 9,
+      "nextTile": 10
+    },
+    {
+      "id": 10
+    }
+  ]
+}
