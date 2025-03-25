@@ -45,6 +45,6 @@ public class LadderTileAction implements TileAction {
      */
     @Override
     public void perform(Player player) {
-        player.placeOnTile(board.getTile(destinationTileId));
+        player.placeOnTile(board.getTileByIndex(destinationTileId));
     }
 }
