@@ -1,4 +1,4 @@
-package idi.edu.idatt.mappe.handlers.reader;
+package idi.edu.idatt.mappe.files.reader;
 
 
 import idi.edu.idatt.mappe.exceptions.JsonParsingException;

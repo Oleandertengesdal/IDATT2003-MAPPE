@@ -10,7 +10,9 @@ import static idi.edu.idatt.mappe.validators.TileValidator.validateTileIndex;
  * The Board class represents the game board of the game.
  */
 public class Board {
-    Map<Integer, Tile> tiles;
+    private Map<Integer, Tile> tiles;
+    private int rows;
+    private int columns;
 
     /**
      * Creates a new board with the given tiles
@@ -25,7 +27,7 @@ public class Board {
      * Creates a new board with no tiles
      */
     public Board() {
-       tiles = new HashMap<>();
+        tiles = new HashMap<>();
     }
 
     /**
@@ -46,8 +48,61 @@ public class Board {
     }
 
     /**
+     * Creates a new board with the given number of rows and columns
+     *
+     * @param rows The number of rows
+     * @param columns The number of columns
+     */
+    public Board(int rows, int columns) {
+        boardSizeValidator(rows * columns);
+        this.rows = rows;
+        this.columns = columns;
+        tiles = new HashMap<>();
+
+        // Create tiles with coordinates
+        for (int i = 0; i < rows; i++) {
+            for (int j = 0; j < columns; j++) {
+                // Calculate tile ID based on row and column
+                int tileId = calculateTileId(i, j);
+                Tile tile = new Tile(tileId, j, i); // x=column, y=row
+                addTile(tileId, tile);
+            }
+        }
+
+        // Connect the tiles (based on the snake-like pattern as shown in the figure)
+        setupTileConnections();
+    }
+
+    /**
+     * Calculates the tile ID based on row and column
+     * Uses a snake-like pattern as shown in the figure
+     *
+     * @param row The row index (0-based)
+     * @param col The column index (0-based)
+     * @return The tile ID
+     */
+    private int calculateTileId(int row, int col) {
+        // Even rows go left to right, odd rows go right to left
+        if (row % 2 == 0) {
+            return row * columns + col + 1;
+        } else {
+            return (row + 1) * columns - col;
+        }
+    }
+
+    /**
+     * Sets up the connections between tiles based on the snake-like pattern
+     */
+    private void setupTileConnections() {
+        for (int i = 1; i < rows * columns; i++) {
+            tiles.get(i).setNextTile(tiles.get(i + 1));
+        }
+    }
+
+    /**
      * Adds a tile to the board
      *
+     * @param index The index of the tile
      * @param tile The tile to add
      */
     public void addTile(int index, Tile tile) {
@@ -60,11 +115,26 @@ public class Board {
      * @param tileIndex The index of the tile
      * @return The tile at the given index
      */
-    public Tile getTile(int tileIndex) {
+    public Tile getTileByIndex(int tileIndex) {
         validateTileIndex(tileIndex, tiles.size());
-        return tiles.get(tileIndex); // The index is 1-based
+        return tiles.get(tileIndex);
     }
 
+    /**
+     * Returns the tile at the given coordinates
+     *
+     * @param x The x-coordinate
+     * @param y The y-coordinate
+     * @return The tile at the given coordinates, or null if no tile exists at the coordinates
+     */
+    public Tile getTileByCoordinates(int x, int y) {
+        for (Tile tile : tiles.values()) {
+            if (tile.getX() == x && tile.getY() == y) {
+                return tile;
+            }
+        }
+        return null;
+    }
 
     /**
      * Sets the tile at the given index
@@ -83,6 +153,75 @@ public class Board {
      * @return The tiles of the board
      */
     public Map<Integer, Tile> getTiles() {
-        return tiles;
+        return new HashMap<>(tiles);
     }
+
+    /**
+     * Returns the number of rows in the board
+     *
+     * @return The number of rows
+     */
+    public int getRows() {
+        return rows;
+    }
+
+    /**
+     * Sets the number of rows in the board
+     *
+     * @param rows The number of rows
+     */
+    public void setRows(int rows) {
+        this.rows = rows;
+    }
+
+    /**
+     * Returns the number of columns in the board
+     *
+     * @return The number of columns
+     */
+    public int getColumns() {
+        return columns;
+    }
+
+    /**
+     * Sets the number of columns in the board
+     *
+     * @param columns The number of columns
+     */
+    public void setColumns(int columns) {
+        this.columns = columns;
+    }
+
+    /**
+     * Converts screen coordinates to board coordinates
+     *
+     * @param screenX The x-coordinate on the screen
+     * @param screenY The y-coordinate on the screen
+     * @param screenWidth The width of the screen
+     * @param screenHeight The height of the screen
+     * @return An array containing the board coordinates [boardX, boardY]
+     */
+    public int[] screenToBoard(double screenX, double screenY, double screenWidth, double screenHeight) {
+        int boardX = (int) (screenX / (screenWidth / columns));
+        int boardY = (int) (screenY / (screenHeight / rows));
+        return new int[]{boardX, boardY};
+    }
+
+    /**
+     * Converts board coordinates to screen coordinates
+     *
+     * @param boardX The x-coordinate on the board
+     * @param boardY The y-coordinate on the board
+     * @param screenWidth The width of the screen
+     * @param screenHeight The height of the screen
+     * @return An array containing the screen coordinates [screenX, screenY]
+     */
+    public double[] boardToScreen(int boardX, int boardY, double screenWidth, double screenHeight) {
+        double tileWidth = screenWidth / columns;
+        double tileHeight = screenHeight / rows;
+        double screenX = boardX * tileWidth + (tileWidth / 2); // Center of the tile
+        double screenY = boardY * tileHeight + (tileHeight / 2); // Center of the tile
+        return new double[]{screenX, screenY};
+    }
+
 }

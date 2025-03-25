@@ -43,8 +43,8 @@ class BoardGameTest {
     @Test
     void testStartGame() {
         boardGame.startGame();
-        assertEquals(boardGame.getBoard().getTile(1), player1.getCurrentTile());
-        assertEquals(boardGame.getBoard().getTile(1), player2.getCurrentTile());
+        assertEquals(boardGame.getBoard().getTileByIndex(1), player1.getCurrentTile());
+        assertEquals(boardGame.getBoard().getTileByIndex(1), player2.getCurrentTile());
     }
 
     @Test
@@ -52,12 +52,12 @@ class BoardGameTest {
         boardGame.setCurrentPlayer(player1);
         boardGame.createDice(1);
         boardGame.play();
-        assertNotEquals(boardGame.getBoard().getTile(1), player1.getCurrentTile());
+        assertNotEquals(boardGame.getBoard().getTileByIndex(1), player1.getCurrentTile());
     }
 
     @Test
     void testGetWinner() {
-        Tile lastTile = boardGame.getBoard().getTile(100);
+        Tile lastTile = boardGame.getBoard().getTileByIndex(100);
         boardGame.getBoard().addTile(100 ,lastTile);
         player1.placeOnTile(lastTile);
         boardGame.getWinner();

@@ -1,4 +1,4 @@
-package idi.edu.idatt.mappe.utility;
+package idi.edu.idatt.mappe.utils;
 
 import java.io.IOException;
 import java.io.InputStream;

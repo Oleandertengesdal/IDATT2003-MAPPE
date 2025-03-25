@@ -1,4 +1,4 @@
-package idi.edu.idatt.mappe.handlers.writer;
+package idi.edu.idatt.mappe.files.writer;
 
 import idi.edu.idatt.mappe.models.Player;
 

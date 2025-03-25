@@ -3,11 +3,11 @@ package idi.edu.idatt.mappe;
 import idi.edu.idatt.mappe.models.Player;
 import idi.edu.idatt.mappe.models.BoardGame;
 
-public class BoardgameApp {
+public class BoardgameMain {
     private final BoardGame boardGame = new BoardGame();
 
     public static void main(String[] args) {
-        BoardgameApp app = new BoardgameApp();
+        BoardgameMain app = new BoardgameMain();
         app.start();
     }
 
