@@ -171,4 +171,13 @@ public class Player {
         currentTile = newTile;
         }
     }
+
+    /**
+     * Returns the index of the current tile
+     *
+     * @return The index of the current tile
+     */
+    public int getCurrentTileIndex() {
+        return currentTile.getIndex();
+    }
 }
