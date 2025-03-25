@@ -6,6 +6,7 @@ import idi.edu.idatt.mappe.models.Board;
 import idi.edu.idatt.mappe.models.BoardGame;
 import idi.edu.idatt.mappe.models.Player;
 import idi.edu.idatt.mappe.models.tileaction.LadderTileAction;
+import idi.edu.idatt.mappe.models.tileaction.RandomTeleportTileAction;
 import idi.edu.idatt.mappe.models.tileaction.SnakeTileAction;
 
 import java.io.File;
@@ -69,21 +70,26 @@ public class BoardGameFactory {
      *
      * @return A simple board game
      */
-    public static BoardGame createSimpleGame() {
+    public static BoardGame createGameOneDice() {
         BoardGame game = new BoardGame();
 
-        game.createBoard(50);
+        game.createBoard(90);
         Board board = game.getBoard();
 
         board.getTileByIndex(3).setLandAction(new LadderTileAction(17, "Ladder from 3 to 17", board));
         board.getTileByIndex(8).setLandAction(new LadderTileAction(31, "Ladder from 8 to 31", board));
         board.getTileByIndex(21).setLandAction(new LadderTileAction(42, "Ladder from 21 to 42", board));
         board.getTileByIndex(28).setLandAction(new LadderTileAction(45, "Ladder from 28 to 45", board));
+        board.getTileByIndex(36).setLandAction(new LadderTileAction(48, "Ladder from 36 to 48", board));
+
+        board.getTileByIndex(41).setLandAction(new RandomTeleportTileAction(board, "Random teleport from 41"));
+        board.getTileByIndex(46).setLandAction(new RandomTeleportTileAction(board, "Random teleport from 46"));
 
         board.getTileByIndex(14).setLandAction(new SnakeTileAction(4, "Snake from 14 to 4", board));
         board.getTileByIndex(34).setLandAction(new SnakeTileAction(20, "Snake from 34 to 20", board));
         board.getTileByIndex(38).setLandAction(new SnakeTileAction(9, "Snake from 38 to 9", board));
         board.getTileByIndex(48).setLandAction(new SnakeTileAction(26, "Snake from 48 to 26", board));
+        board.getTileByIndex(49).setLandAction(new SnakeTileAction(11, "Snake from 49 to 11", board));
 
         game.createDice(1, 6);
 
@@ -95,18 +101,23 @@ public class BoardGameFactory {
      *
      * @return A mini board game
      */
-    public static BoardGame createMiniGame() {
+    public static BoardGame createSimpleGameOneDice() {
         BoardGame game = new BoardGame();
 
-        game.createBoard(30);
+        game.createBoard(90);
         Board board = game.getBoard();
 
         board.getTileByIndex(2).setLandAction(new LadderTileAction(12, "Ladder from 2 to 12", board));
         board.getTileByIndex(5).setLandAction(new LadderTileAction(15, "Ladder from 5 to 15", board));
         board.getTileByIndex(19).setLandAction(new LadderTileAction(28, "Ladder from 19 to 28", board));
+        board.getTileByIndex(22).setLandAction(new LadderTileAction(57, "Ladder from 22 to 57", board));
+        board.getTileByIndex(25).setLandAction(new LadderTileAction(78, "Ladder from 25 to 78", board));
 
         board.getTileByIndex(17).setLandAction(new SnakeTileAction(7, "Snake from 17 to 7", board));
         board.getTileByIndex(24).setLandAction(new SnakeTileAction(16, "Snake from 24 to 16", board));
+        board.getTileByIndex(27).setLandAction(new SnakeTileAction(9, "Snake from 27 to 9", board));
+        board.getTileByIndex(85).setLandAction(new SnakeTileAction(22, "Snake from 85 to 22", board));
+        board.getTileByIndex(88).setLandAction(new SnakeTileAction(51, "Snake from 88 to 51", board));
 
         game.createDice(1, 6);
 
