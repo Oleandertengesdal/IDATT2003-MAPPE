@@ -110,7 +110,7 @@ public class BoardGame {
     public void addPlayer(Player player) {
         players.add(player);
         player.setGame(this);
-        player.placeOnTile(board.getTile(1));
+        player.placeOnTile(board.getTileByIndex(1));
     }
 
 
@@ -151,7 +151,7 @@ public class BoardGame {
      */
     public void startGame() {
         for (Player player : players) {
-            player.placeOnTile(board.getTile(1));
+            player.placeOnTile(board.getTileByIndex(1));
         }
     }
 
@@ -167,7 +167,7 @@ public class BoardGame {
         if (newIndex > board.getTiles().size()) {
             newIndex = board.getTiles().size();
         }
-        player.placeOnTile(board.getTile(newIndex));
+        player.placeOnTile(board.getTileByIndex(newIndex));
     }
 
     public boolean isFinished() {
