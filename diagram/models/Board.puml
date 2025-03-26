@@ -1,0 +1,19 @@
+@startuml
+class Board {
+    - Map<Integer, Tile> tiles
+    - int rows
+    - int collums
+    + Board(int rows, int collums)
+    + Board(int size)
+    + void addTile(Tile tile)
+    + Tile getTile(int tileIndex)
+    + void setTile(int index, Tile tile)
+    + Map<Integer, Tile> getTiles()
+    + int calculateTileId(int row, int collum)
+    + void setupTileConnections()
+    + Tile getTileByIndex(int index)
+    + Tile getTileByCoordinates(int row, int collum)
+    + double[] boardToScreen(int boardX, int boardY, double screenWidth, double screenHeight)
+    + double[] screenToBoard(double screenX, double screenY, double screenWidth, double screenHeight)
+}
+@enduml

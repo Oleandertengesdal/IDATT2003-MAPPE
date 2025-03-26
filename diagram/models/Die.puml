@@ -1,0 +1,12 @@
+@startuml
+class Die {
+    - int lastRolledValue
+    - Random random
+    - int numberOfSides
+    + Die(int numberOfSides)
+    + Die()
+    + int roll()
+    + int getValue()
+    + int getNumberOfSides()
+}
+@enduml

@@ -1,0 +1,27 @@
+@startuml
+class Player {
+    - String name
+    - String token
+    - Tile currentTile
+    - BoardGame game
+    - boolean extraThrow
+    - boolean missingTurn
+    - static Logger logger
+    + Player(String name, String token)
+    + Player(String name)
+    + String getName()
+    + String getToken()
+    + Tile getCurrentTile()
+    + void setName(String name)
+    + Board getBoard()
+    + BoardGame getGame()
+    + void setGame(BoardGame game)
+    + void placeOnTile(Tile tile)
+    + boolean hasExtraThrow()
+    + void setExtraThrow(boolean extraThrow)
+    + boolean isMissingTurn()
+    + void setMissingTurn(boolean missingTurn)
+    + void move(int steps)
+    + int getCurrentTileIndex()
+}
+@enduml

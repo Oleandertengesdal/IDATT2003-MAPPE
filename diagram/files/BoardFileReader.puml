@@ -1,0 +1,11 @@
+@startuml
+interface BoardFileReader {
+    + Board readBoard(String filePath) throws JsonParsingException
+}
+
+class BoardFileReaderGson {
+    + Board readBoard(String fileName) throws JsonParsingException
+}
+
+BoardFileReader <|.. BoardFileReaderGson
+@enduml

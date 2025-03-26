@@ -1,0 +1,10 @@
+@startuml
+class Dice {
+    - List<Die> dice
+    + Dice(int numberOfDice, int numberOfSides)
+    + Dice(int numberOfDice)
+    + int roll()
+    + List<Integer> getValues()
+    + int getDie(int dieNumber)
+}
+@enduml

@@ -1,0 +1,18 @@
+@startuml
+start
+:Start Game;
+:Select Game Variant;
+:Initialize Board;
+:Initialize Players;
+repeat
+  :Roll Dice;
+  :Move Player;
+  if (Special Tile?) then (yes)
+    :Perform Tile Action;
+  else (no)
+  endif
+  :End Turn;
+repeat while (Game Not Over?)
+:Declare Winner;
+stop
+@enduml
