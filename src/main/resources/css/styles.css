@@ -1,0 +1,38 @@
+.root {
+    -fx-font-family: "Arial";
+    -fx-base: #ececec;
+}
+
+.button {
+    -fx-background-color: #4a6baf;
+    -fx-text-fill: white;
+    -fx-padding: 5 15;
+    -fx-background-radius: 5;
+}
+
+.button:hover {
+    -fx-background-color: #3a5a9f;
+}
+
+.label {
+    -fx-text-fill: #333333;
+}
+
+.title {
+    -fx-font-size: 24px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #2a4a8f;
+}
+
+.tile {
+    -fx-stroke: black;
+    -fx-stroke-width: 1;
+}
+
+.player-info {
+    -fx-padding: 10;
+    -fx-background-color: #f0f0f0;
+    -fx-border-color: #d0d0d0;
+    -fx-border-radius: 5;
+    -fx-background-radius: 5;
+}

@@ -3,7 +3,6 @@
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0␣http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
-    <!-- TODO: Replace with your own groupID and artifactID -->
     <groupId>idi.edu.idatt.mappe</groupId>
     <artifactId>IDATT2003-MAPPE</artifactId>
     <version>1.0-SNAPSHOT</version>
@@ -63,7 +62,7 @@
                 <version>0.0.8</version>
                 <configuration>
                     <!-- TODO: Replace with your own main-class -->
-                    <mainClass>org.openjfx.App</mainClass>
+                    <mainClass>idi.edu.idatt.mappe.BoardgameMain</mainClass>
                 </configuration>
             </plugin>
         </plugins>
