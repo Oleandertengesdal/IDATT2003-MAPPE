@@ -1,0 +1,33 @@
+@startuml
+class BoardGame {
+    - Board board
+    - Player currentPlayer
+    - List<Player> players
+    - Dice dice
+    - GameState gameState
+    - boolean finished
+    - List<BoardGameObserver> observers
+    + BoardGame()
+    + Board getBoard()
+    + List<Player> getPlayers()
+    + Dice getDice()
+    + void setCurrentPlayer(Player currentPlayer)
+    + Player getCurrentPlayer()
+    + void setBoard(Board board)
+    + void createBoard(int size)
+    + void createDice(int numberOfDice)
+    + void createDice(int numberOfDice, int numberOfSides)
+    + void addPlayer(Player player)
+    + void play()
+    + void playOneRound()
+    + Player getWinner()
+    + void startGame()
+    + void movePlayer(Player player, int steps)
+    + boolean isFinished()
+    + void addObserver(BoardGameObserver observer)
+    + void removeObserver(BoardGameObserver observer)
+    + void notifyPlayerMoved(Player player, int steps)
+    + void notifyGameStateChanged(GameState newState)
+    + void notifyGameWinner(Player winner)
+}
+@enduml

@@ -1,0 +1,23 @@
+@startuml
+actor User
+actor Player
+
+User -> (Start Game)
+User -> (Select Game Variant)
+User -> (Add Player)
+User -> (Roll Dice)
+User -> (Move Player)
+User -> (End Turn)
+User -> (Declare Winner)
+
+(Player) <|-- (Add Player)
+(Player) <|-- (Move Player)
+(Player) <|-- (Declare Winner)
+
+(Start Game) --> (Select Game Variant)
+(Start Game) --> (Add Player)
+(Start Game) --> (Roll Dice)
+(Roll Dice) --> (Move Player)
+(Move Player) --> (End Turn)
+(End Turn) --> (Declare Winner)
+@enduml

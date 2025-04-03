@@ -1,0 +1,17 @@
+@startuml
+
+class Tile {
+    - int index
+    - Tile nextTile
+    - TileAction landAction
+    - int x
+    - int y
+    + Tile(int index)
+    + Tile(int index, int x, int y)
+    + void setNextTile(Tile nextTile)
+    + Tile getNextTile()
+    + int getTileIndex()
+    + void setLandAction(TileAction landAction)
+    + void landPlayer(Player player)
+}
+@enduml

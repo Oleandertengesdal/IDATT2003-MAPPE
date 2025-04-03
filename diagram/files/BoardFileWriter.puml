@@ -1,0 +1,13 @@
+@startuml
+interface BoardFileWriter {
+    + void writeBoard(Board board, String filePath) throws IOException
+}
+
+class BoardFileWriterGson {
+    + void writeBoard(Board board, String filePath) throws IOException
+    + JsonObject serializeBoard(Board board, String name, String description) throws TileActionNotFoundException {
+    + JsonObject getJsonObject(TileAction action) throws TileActionNotFoundException {
+}
+
+BoardFileWriter <|.. BoardFileWriterGson
+@enduml

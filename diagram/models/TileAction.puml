@@ -1,0 +1,50 @@
+@startuml
+interface TileAction {
+    + void perform(Player player)
+}
+
+class LadderTileAction {
+    + void perform(Player player)
+    + int getDestinationTileId()
+    + String getDescription()
+}
+
+class SnakeTileAction {
+    + void perform(Player player)
+    + int getDestinationTileId()
+    + String getDescription()
+}
+
+class RandomTeleportTileAction {
+    + void perform(Player player)
+    + String getDescription()
+}
+
+class SwapTileAction {
+    + void perform(Player player)
+    + String getDescription()
+}
+
+class MissingTurnTileAction {
+    + void perform(Player player)
+    + String getDescription()
+}
+
+class GoToJailTileAction {
+    + void perform(Player player)
+    + String getDescription()
+}
+
+class ExtraThrowTileAction {
+    + void perform(Player player)
+    + String getDescription()
+}
+
+TileAction <|.. LadderTileAction
+TileAction <|.. SnakeTileAction
+TileAction <|.. RandomTeleportTileAction
+TileAction <|.. SwapTileAction
+TileAction <|.. MissingTurnTileAction
+TileAction <|.. GoToJailTileAction
+TileAction <|.. ExtraThrowTileAction
+@enduml

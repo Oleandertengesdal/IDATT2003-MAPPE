@@ -47,7 +47,7 @@ public class Player {
      * @return The token of the player
      */
     public String getToken() {
-        return token;
+        return null;
     }
 
 
