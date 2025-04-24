@@ -252,4 +252,13 @@ public class BoardGame {
             observer.onGameWinner(winner);
         }
     }
+
+    /**
+     * Returns the current game state
+     *
+     * @return The current game state
+     */
+    public GameState getGameState() {
+        return gameState;
+    }
 }
