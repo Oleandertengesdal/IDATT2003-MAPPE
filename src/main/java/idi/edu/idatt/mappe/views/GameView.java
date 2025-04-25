@@ -15,6 +15,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 
 public class GameView extends Pane implements BoardGameObserver {
 
@@ -85,11 +86,11 @@ public class GameView extends Pane implements BoardGameObserver {
             Color tileColor;
 
             if (ladderDestinations.containsKey(tileIndex)) {
-                // This is a ladder destination - use a bright green color
-                tileColor = Color.web("#90EE90"); // Light green
+                // This is a ladder destination
+                tileColor = Color.web("#90EE90"); //Green
             } else if (snakeDestinations.containsKey(tileIndex)) {
-                // This is a snake destination - use a bright red color
-                tileColor = Color.web("#FFC0CB"); // Light pink/red
+                // This is a snake destination
+                tileColor = Color.web("#FFC0CB"); //Red
             } else {
                 // Regular tile or tile with action
                 TileAction action = tile.getLandAction();
@@ -156,6 +157,13 @@ public class GameView extends Pane implements BoardGameObserver {
         getChildren().addAll(connections);
     }
 
+    /**
+     * Adds a players token to the board.
+     * Each player is represented by a colored circle.
+     * The color of the player is randomly selected.
+     *
+     * @param player The player to add.
+     */
     public void addPlayer(Player player) {
         Circle token = new Circle(10);
         token.setFill(Color.color(Math.random(), Math.random(), Math.random()));
@@ -164,15 +172,20 @@ public class GameView extends Pane implements BoardGameObserver {
         updatePlayerPosition(player);
     }
 
+    /**
+     * Updates the position of the player token on the board.
+     * This method is called whenever a player moves.
+     * The function takes to account the possibility of mulitple players on the same tile,
+     * when mulitple players are on the same tile they will be offset from each other to
+     * make it easier to see all players.
+     *
+     * @param player The players whose position to update.
+     */
     private void updatePlayerPosition(Player player) {
         // Group players by their current tile
-        Map<Tile, List<Player>> playersOnTiles = new HashMap<>();
-        for (Player p : playerTokens.keySet()) {
-            Tile tile = p.getCurrentTile();
-            if (tile != null) {
-                playersOnTiles.computeIfAbsent(tile, k -> new ArrayList<>()).add(p);
-            }
-        }
+        Map<Tile, List<Player>> playersOnTiles = playerTokens.keySet().stream()
+                .filter(p -> p.getCurrentTile() != null)
+                .collect(Collectors.groupingBy(Player::getCurrentTile));
 
         // Update the position of the player's token
         Tile tile = player.getCurrentTile();
@@ -183,6 +196,8 @@ public class GameView extends Pane implements BoardGameObserver {
 
         if (playersOnTile != null) {
             int index = playersOnTile.indexOf(player);
+            // Calculate offsets for multiple players on the same tile.
+            // This makes it possible to idetify different plauers on the same tile.
             double offsetX = (index % 2 == 0 ? -1 : 1) * ((double) index / 2) * 10;
             double offsetY = (index % 2 == 0 ? -1 : 1) * ((double) index / 2) * 10;
 
@@ -199,7 +214,8 @@ public class GameView extends Pane implements BoardGameObserver {
 
     @Override
     public void onGameStateChanged(GameState gameState) {
-        // optional status update
+        // Update the window in the UI.
+        // This is not implemented yet.
     }
 
     @Override

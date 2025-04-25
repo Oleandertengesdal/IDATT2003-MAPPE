@@ -148,7 +148,6 @@ public class BoardGame {
     public Player getWinner() {
         for (Player player : players) {
             if (player.getCurrentTile().getIndex() == board.getTiles().size()) {
-                System.out.println(player.getName() + " is the winner!");
                 return player;
             }
         }

@@ -100,7 +100,7 @@ public class ConnectionView extends Group {
 
         // Add rungs (steps)
         int steps = (int)(length / 20) + 2;  // Adjust number of steps based on ladder length
-        steps = Math.max(3, Math.min(10, steps));  // At least 3 steps, at most 10
+        steps = Math.max(3, Math.min(12, steps));  // At least 3 steps, at most 12
 
         for (int i = 0; i <= steps; i++) {
             double t = (double) i / steps;
@@ -136,13 +136,13 @@ public class ConnectionView extends Group {
         LinearGradient snakeGradient = new LinearGradient(
                 0, 0, 1, 1, true, CycleMethod.NO_CYCLE,
                 new Stop(0, Color.DARKGREEN),
-                new Stop(0.5, Color.FORESTGREEN),
+                new Stop(0.5, Color.INDIANRED),
                 new Stop(1, Color.MEDIUMSEAGREEN)
         );
 
         snakeBody.setStroke(snakeGradient);
         snakeBody.setStrokeWidth(tileWidth * 0.25);
-        snakeBody.setFill(null);  // No fill, just stroke
+        snakeBody.setFill(null);
 
         // Add shadow
         DropShadow dropShadow = new DropShadow();
