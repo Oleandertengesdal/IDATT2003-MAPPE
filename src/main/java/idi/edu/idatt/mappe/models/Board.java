@@ -1,5 +1,7 @@
 package idi.edu.idatt.mappe.models;
 
+import idi.edu.idatt.mappe.exceptions.TileNotFoundException;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -224,4 +226,31 @@ public class Board {
         return new double[]{screenX, screenY};
     }
 
+    /**
+     * Method to get the row of the tile
+     *
+     * @param tileId The ID of the tile
+     * @return The row of the tile
+     */
+    public int getRow(int tileId) {
+        Tile tile = tiles.get(tileId);
+        if (tile != null) {
+            return tile.getX();
+        }
+        return -1;
+    }
+
+    /**
+     * Method to get the column of the tile
+     *
+     * @param tileId The ID of the tile
+     * @return The column of the tile
+     */
+    public int getCol(int tileId) {
+        Tile tile = tiles.get(tileId);
+        if (tile != null) {
+            return tile.getY();
+        }
+        return -1;
+    }
 }

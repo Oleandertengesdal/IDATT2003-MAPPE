@@ -1,5 +1,6 @@
 package idi.edu.idatt.mappe.factory;
 
+import idi.edu.idatt.mappe.exceptions.InvalidGameTypeException;
 import idi.edu.idatt.mappe.exceptions.JsonParsingException;
 import idi.edu.idatt.mappe.files.reader.BoardFileReaderGson;
 import idi.edu.idatt.mappe.models.Board;
@@ -37,10 +38,10 @@ public class BoardGameFactory {
     public static BoardGame createClassicGame() {
         BoardGame game = new BoardGame();
 
-        game.createBoard(90);
-        Board board = game.getBoard();
+        Board board = new Board(9, 10);
+        game.setBoard(board);
 
-        board.getTileByIndex(1).setLandAction(new LadderTileAction(38, "Ladder from 1 to 38", board));
+        board.getTileByIndex(2).setLandAction(new LadderTileAction(38, "Ladder from 2 to 38", board));
         board.getTileByIndex(4).setLandAction(new LadderTileAction(14, "Ladder from 4 to 14", board));
         board.getTileByIndex(9).setLandAction(new LadderTileAction(31, "Ladder from 9 to 31", board));
         board.getTileByIndex(21).setLandAction(new LadderTileAction(42, "Ladder from 21 to 42", board));
@@ -55,7 +56,7 @@ public class BoardGameFactory {
         board.getTileByIndex(49).setLandAction(new SnakeTileAction(11, "Snake from 49 to 11", board));
         board.getTileByIndex(56).setLandAction(new SnakeTileAction(53, "Snake from 56 to 53", board));
         board.getTileByIndex(62).setLandAction(new SnakeTileAction(19, "Snake from 62 to 19", board));
-        board.getTileByIndex(64).setLandAction(new SnakeTileAction(60, "Snake from 64 to 60", board));
+        board.getTileByIndex(65).setLandAction(new SnakeTileAction(60, "Snake from 65 to 60", board));
         board.getTileByIndex(77).setLandAction(new SnakeTileAction(24, "Snake from 77 to 24", board));
         board.getTileByIndex(83).setLandAction(new SnakeTileAction(72, "Snake from 83 to 72", board));
         board.getTileByIndex(85).setLandAction(new SnakeTileAction(64, "Snake from 85 to 64", board));
@@ -193,5 +194,18 @@ public class BoardGameFactory {
         }
 
         return game;
+    }
+
+    public static BoardGame createGame(String gameType) throws InvalidGameTypeException {
+        switch (gameType) {
+            case "SNAKES_LADDERS":
+                return createClassicGame();
+            case "Simple":
+                return createSimpleGameOneDice();
+            case "OneDice":
+                return createGameOneDice();
+            default:
+                throw new InvalidGameTypeException("Invalid game type: " + gameType);
+        }
     }
 }

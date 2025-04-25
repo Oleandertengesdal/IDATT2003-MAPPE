@@ -2,10 +2,10 @@ package idi.edu.idatt.mappe.utils;
 
 /**
  * Utility class for converting between different coordinate systems
- *
  * Based on the formulas:
  * (x, y) = ((xmax/cmax) * c, ymax - (ymax/rmax) * r)
  * (r, c) = (rmax - (rmax/ymax) * y, (cmax/xmax) * x)
+ * This is inspired form the formula given in the project description.
  */
 public class CoordinateConverter {
 

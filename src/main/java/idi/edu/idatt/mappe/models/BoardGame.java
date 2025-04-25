@@ -148,7 +148,6 @@ public class BoardGame {
     public Player getWinner() {
         for (Player player : players) {
             if (player.getCurrentTile().getIndex() == board.getTiles().size()) {
-                System.out.println(player.getName() + " is the winner!");
                 return player;
             }
         }
@@ -251,5 +250,14 @@ public class BoardGame {
         for (BoardGameObserver observer : observers) {
             observer.onGameWinner(winner);
         }
+    }
+
+    /**
+     * Returns the current game state
+     *
+     * @return The current game state
+     */
+    public GameState getGameState() {
+        return gameState;
     }
 }

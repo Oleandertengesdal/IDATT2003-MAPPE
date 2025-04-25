@@ -56,9 +56,7 @@ public class BoardFileReaderGson implements BoardFileReader {
             }
 
             // Set the tiles in the board
-            for (Map.Entry<Integer, Tile> entry : tilesMap.entrySet()) {
-                board.addTile(entry.getKey(), entry.getValue());
-            }
+            tilesMap.forEach((key, tile) -> board.addTile(tile.getIndex(), tile));
 
             // Second pass: Set next tiles and actions
             for (JsonElement tileElement : tilesJsonArray) {
