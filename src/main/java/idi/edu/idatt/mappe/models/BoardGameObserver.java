@@ -1,5 +1,7 @@
 package idi.edu.idatt.mappe.models;
 
+import idi.edu.idatt.mappe.models.enums.GameState;
+
 public interface BoardGameObserver {
     /**
      * Called when a player moves
@@ -19,4 +21,14 @@ public interface BoardGameObserver {
      * @param winner The winning player
      */
     void onGameWinner(Player winner);
+
+
+    /**
+     * Called when a player is captured
+     *
+     * @param captor The player who captured
+     * @param victim The player who was captured
+     */
+    void onPlayerCaptured(Player captor, Player victim);
+
 }

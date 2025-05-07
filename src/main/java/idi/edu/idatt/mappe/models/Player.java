@@ -11,6 +11,9 @@ public class Player {
     private String token;
     private Tile currentTile;
     private BoardGame game;
+
+    private boolean hasReachedHome;
+
     private boolean extraThrow;
     private boolean missingTurn;
 
@@ -47,7 +50,16 @@ public class Player {
      * @return The token of the player
      */
     public String getToken() {
-        return null;
+        return token;
+    }
+
+    /**
+     * Sets the token of the player
+     *
+     * @param token The token of the player
+     */
+    public void setToken(String token) {
+        this.token = token;
     }
 
 
@@ -179,5 +191,27 @@ public class Player {
      */
     public int getCurrentTileIndex() {
         return currentTile.getIndex();
+    }
+
+    public void setCurrentTile(Tile nextTile) {
+        this.currentTile = nextTile;
+    }
+
+    /**
+     * Returns whether the player has reached home
+     *
+     * @return Whether the player has reached home
+     */
+    public boolean hasReachedHome() {
+        return hasReachedHome;
+    }
+
+    /**
+     * Sets whether the player has reached home
+     *
+     * @param hasReachedHome Whether the player has reached home
+     */
+    public void setHasReachedHome(boolean hasReachedHome) {
+        this.hasReachedHome = hasReachedHome;
     }
 }

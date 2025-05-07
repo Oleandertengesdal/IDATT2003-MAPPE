@@ -1,0 +1,42 @@
+@startuml
+class Board {
+    - Map<Integer, Tile> tiles
+}
+
+class Tile {
+    - int index
+    - Tile nextTile
+}
+
+class Player {
+    - String name
+    - Tile currentTile
+}
+
+class Dice {
+    - List<Die> dice
+}
+
+class Die {
+    - int value
+}
+
+interface TileAction {
+    + void perform(Player player)
+}
+
+class BoardGame {
+    - Board board
+    - List<Player> players
+    - Dice dice
+}
+
+Board "1" *-- "many" Tile
+Tile "1" --> "1" Tile : next
+Player "1" --> "1" Tile : currentTile
+BoardGame "1" *-- "1" Board
+BoardGame "1" *-- "many" Player
+BoardGame "1" *-- "1" Dice
+Dice "1" *-- "many" Die
+Tile "1" *-- "1" TileAction
+@enduml

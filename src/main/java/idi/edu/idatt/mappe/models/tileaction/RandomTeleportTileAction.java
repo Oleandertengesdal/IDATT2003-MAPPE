@@ -37,6 +37,7 @@ public class RandomTeleportTileAction implements TileAction {
      *
      * @return The description of the action
      */
+    @Override
     public String getDescription() {
         return description;
     }

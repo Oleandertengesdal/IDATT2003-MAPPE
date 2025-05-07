@@ -1,8 +1,10 @@
 package idi.edu.idatt.mappe.models;
 
-import idi.edu.idatt.mappe.exceptions.TileNotFoundException;
+import idi.edu.idatt.mappe.models.enums.GameType;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import static idi.edu.idatt.mappe.validators.BoardValidator.boardSizeValidator;
@@ -15,6 +17,7 @@ public class Board {
     private Map<Integer, Tile> tiles;
     private int rows;
     private int columns;
+    private GameType gameType;
 
     /**
      * Creates a new board with the given tiles
@@ -27,8 +30,11 @@ public class Board {
 
     /**
      * Creates a new board with no tiles
+     *
+     * @param gameType The type of game this board is for
      */
-    public Board() {
+    public Board(GameType gameType) {
+        this.gameType = gameType;
         tiles = new HashMap<>();
     }
 
@@ -36,16 +42,23 @@ public class Board {
      * Creates a new board with the given size
      *
      * @param size The size of the board
+     * @param gameType The type of game this board is for
      */
-    public Board(int size) {
+    public Board(int size, GameType gameType) {
         boardSizeValidator(size);
+        this.gameType = gameType;
+
         tiles = new HashMap<>();
-        for (int i = 1; i <= size; i++) {
-            addTile(i, new Tile(i));
-        }
-        // Connect the tiles
-        for (int i = 1; i <= size - 1; i++) {
-            tiles.get(i).setNextTile(tiles.get(i + 1));
+
+        if (gameType == GameType.LUDO) {
+            setupLudoBoard((int) Math.round(Math.sqrt(size)), (int) Math.round(Math.sqrt(size)));
+        } else {
+            for (int i = 1; i <= size; i++) {
+                addTile(i, new Tile(i));
+            }
+            for (int i = 1; i <= size - 1; i++) {
+                tiles.get(i).setNextTile(tiles.get(i + 1));
+            }
         }
     }
 
@@ -54,37 +67,128 @@ public class Board {
      *
      * @param rows The number of rows
      * @param columns The number of columns
+     * @param gameType The type of game this board is for
      */
-    public Board(int rows, int columns) {
+    public Board(int rows, int columns, GameType gameType) {
         boardSizeValidator(rows * columns);
         this.rows = rows;
         this.columns = columns;
+        this.gameType = gameType;
+
+        if (gameType == GameType.LUDO) {
+            setupLudoBoard(rows, columns);
+        } else if (gameType == GameType.SNAKES_AND_LADDERS) {
+            setupSnakesAndLaddersBoard();
+        } else if (gameType == GameType.THE_LOST_DIAMOND) {
+            setupLostDiamondBoard();
+        } else {
+            setupSnakesAndLaddersBoard();
+        }
+    }
+
+    /**
+     * Sets up a Snakes and Ladders board with the snake pattern
+     */
+    private void setupSnakesAndLaddersBoard() {
         tiles = new HashMap<>();
 
-        // Create tiles with coordinates
         for (int i = 0; i < rows; i++) {
             for (int j = 0; j < columns; j++) {
-                // Calculate tile ID based on row and column
-                int tileId = calculateTileId(i, j);
-                Tile tile = new Tile(tileId, j, i); // x=column, y=row
+                int tileId = calculateSnakePatternTileId(i, j);
+                Tile tile = new Tile(tileId, j, i);
                 addTile(tileId, tile);
             }
         }
 
-        // Connect the tiles (based on the snake-like pattern as shown in the figure)
-        setupTileConnections();
+        for (int i = 1; i < rows * columns; i++) {
+            tiles.get(i).setNextTile(tiles.get(i + 1));
+        }
     }
 
     /**
-     * Calculates the tile ID based on row and column
-     * Uses a snake-like pattern as shown in the figure
+     * Sets up a Ludo board with a hollow square pattern
+     *
+     * @param rows The number of rows
+     * @param columns The number of columns
+     */
+    private void setupLudoBoard(int rows, int columns) {
+        this.rows = rows;
+        this.columns = columns;
+        tiles = new HashMap<>();
+
+        for (int i = 0; i < rows; i++) {
+            for (int j = 0; j < columns; j++) {
+                int tileId = i * columns + j + 1;
+                Tile tile = new Tile(tileId, j, i);
+
+                boolean isPerimeterTile = (i == 0 || i == rows - 1 || j == 0 || j == columns - 1);
+                if (!isPerimeterTile) {
+                    tile.setDisabled(true);
+                }
+
+                addTile(tileId, tile);
+            }
+        }
+
+        List<Integer> perimeterTileIds = getPerimeterTileIds();
+        for (int i = 0; i < perimeterTileIds.size() - 1; i++) {
+            tiles.get(perimeterTileIds.get(i)).setNextTile(tiles.get(perimeterTileIds.get(i + 1)));
+        }
+
+        if (!perimeterTileIds.isEmpty()) {
+            tiles.get(perimeterTileIds.get(perimeterTileIds.size() - 1))
+                    .setNextTile(tiles.get(perimeterTileIds.get(0)));
+        }
+    }
+
+    /**
+     * Sets up a board for The Lost Diamond game
+     * This is just a placeholder - implement according to your specific requirements
+     */
+    private void setupLostDiamondBoard() {
+        setupSnakesAndLaddersBoard();
+    }
+
+    /**
+     * Gets a list of tile IDs that form the perimeter of the board
+     * This is used for Ludo board setup
+     *
+     * @return List of tile IDs around the perimeter in clockwise order
+     */
+    public List<Integer> getPerimeterTileIds() {
+        List<Integer> perimeter = new ArrayList<>();
+
+        // Top row (left to right)
+        for (int j = 0; j < columns; j++) {
+            perimeter.add(j + 1);
+        }
+
+        // Right column (top to bottom, excluding the top corner already added)
+        for (int i = 1; i < rows; i++) {
+            perimeter.add(i * columns + columns);
+        }
+
+        // Bottom row (right to left, excluding the right corner already added)
+        for (int j = columns - 2; j >= 0; j--) {
+            perimeter.add((rows - 1) * columns + j + 1);
+        }
+
+        // Left column (bottom to top, excluding corners already added)
+        for (int i = rows - 2; i > 0; i--) {
+            perimeter.add(i * columns + 1);
+        }
+
+        return perimeter;
+    }
+
+    /**
+     * Calculates the tile ID based on row and column for the snake pattern
      *
      * @param row The row index (0-based)
      * @param col The column index (0-based)
      * @return The tile ID
      */
-    private int calculateTileId(int row, int col) {
-        // Even rows go left to right, odd rows go right to left
+    private int calculateSnakePatternTileId(int row, int col) {
         if (row % 2 == 0) {
             return row * columns + col + 1;
         } else {
@@ -93,12 +197,30 @@ public class Board {
     }
 
     /**
-     * Sets up the connections between tiles based on the snake-like pattern
+     * Gets the next tile on the perimeter (for Ludo movement)
+     *
+     * @param currentTileId The current tile ID
+     * @param steps Number of steps to move
+     * @return The ID of the destination tile
      */
-    private void setupTileConnections() {
-        for (int i = 1; i < rows * columns; i++) {
-            tiles.get(i).setNextTile(tiles.get(i + 1));
+    public int getNextPerimeterTileId(int currentTileId, int steps) {
+        if (gameType != GameType.LUDO) {
+            // For non-Ludo games, just add steps
+            return Math.min(currentTileId + steps, tiles.size());
         }
+
+        List<Integer> perimeter = getPerimeterTileIds();
+
+        // Find the current position on the perimeter
+        int currentPos = perimeter.indexOf(currentTileId);
+        if (currentPos == -1) {
+            // Not on perimeter, return starting position
+            return perimeter.get(0);
+        }
+
+        // Calculate next position with wraparound
+        int nextPos = (currentPos + steps) % perimeter.size();
+        return perimeter.get(nextPos);
     }
 
     /**
@@ -118,8 +240,12 @@ public class Board {
      * @return The tile at the given index
      */
     public Tile getTileByIndex(int tileIndex) {
-        validateTileIndex(tileIndex, tiles.size());
-        return tiles.get(tileIndex);
+        try {
+            validateTileIndex(tileIndex, tiles.size());
+            return tiles.get(tileIndex);
+        } catch (IndexOutOfBoundsException e) {
+            throw new IndexOutOfBoundsException("Tile with index " + tileIndex + " not found.");
+        }
     }
 
     /**
@@ -127,7 +253,7 @@ public class Board {
      *
      * @param x The x-coordinate
      * @param y The y-coordinate
-     * @return The tile at the given coordinates, or null if no tile exists at the coordinates
+     * @return The tile at the given coordinates, or null if no tile exists
      */
     public Tile getTileByCoordinates(int x, int y) {
         for (Tile tile : tiles.values()) {
@@ -136,17 +262,6 @@ public class Board {
             }
         }
         return null;
-    }
-
-    /**
-     * Sets the tile at the given index
-     *
-     * @param index The index of the tile
-     * @param tile The tile to set
-     */
-    public void setTile(int index, Tile tile) {
-        validateTileIndex(index, tiles.size());
-        tiles.put(index, tile);
     }
 
     /**
@@ -159,7 +274,25 @@ public class Board {
     }
 
     /**
-     * Returns the number of rows in the board
+     * Returns the game type of this board
+     *
+     * @return The game type
+     */
+    public GameType getGameType() {
+        return gameType;
+    }
+
+    /**
+     * Sets the game type of this board
+     *
+     * @param gameType The game type to set
+     */
+    public void setGameType(GameType gameType) {
+        this.gameType = gameType;
+    }
+
+    /**
+     * Gets the rows in the board
      *
      * @return The number of rows
      */
@@ -168,16 +301,7 @@ public class Board {
     }
 
     /**
-     * Sets the number of rows in the board
-     *
-     * @param rows The number of rows
-     */
-    public void setRows(int rows) {
-        this.rows = rows;
-    }
-
-    /**
-     * Returns the number of columns in the board
+     * Gets the columns in the board
      *
      * @return The number of columns
      */
@@ -186,71 +310,11 @@ public class Board {
     }
 
     /**
-     * Sets the number of columns in the board
-     *
-     * @param columns The number of columns
+     * Sets up the connections between tiles for the standard snake pattern
      */
-    public void setColumns(int columns) {
-        this.columns = columns;
-    }
-
-    /**
-     * Converts screen coordinates to board coordinates
-     *
-     * @param screenX The x-coordinate on the screen
-     * @param screenY The y-coordinate on the screen
-     * @param screenWidth The width of the screen
-     * @param screenHeight The height of the screen
-     * @return An array containing the board coordinates [boardX, boardY]
-     */
-    public int[] screenToBoard(double screenX, double screenY, double screenWidth, double screenHeight) {
-        int boardX = (int) (screenX / (screenWidth / columns));
-        int boardY = (int) (screenY / (screenHeight / rows));
-        return new int[]{boardX, boardY};
-    }
-
-    /**
-     * Converts board coordinates to screen coordinates
-     *
-     * @param boardX The x-coordinate on the board
-     * @param boardY The y-coordinate on the board
-     * @param screenWidth The width of the screen
-     * @param screenHeight The height of the screen
-     * @return An array containing the screen coordinates [screenX, screenY]
-     */
-    public double[] boardToScreen(int boardX, int boardY, double screenWidth, double screenHeight) {
-        double tileWidth = screenWidth / columns;
-        double tileHeight = screenHeight / rows;
-        double screenX = boardX * tileWidth + (tileWidth / 2); // Center of the tile
-        double screenY = boardY * tileHeight + (tileHeight / 2); // Center of the tile
-        return new double[]{screenX, screenY};
-    }
-
-    /**
-     * Method to get the row of the tile
-     *
-     * @param tileId The ID of the tile
-     * @return The row of the tile
-     */
-    public int getRow(int tileId) {
-        Tile tile = tiles.get(tileId);
-        if (tile != null) {
-            return tile.getX();
+    private void setupTileConnections() {
+        for (int i = 1; i < rows * columns; i++) {
+            tiles.get(i).setNextTile(tiles.get(i + 1));
         }
-        return -1;
-    }
-
-    /**
-     * Method to get the column of the tile
-     *
-     * @param tileId The ID of the tile
-     * @return The column of the tile
-     */
-    public int getCol(int tileId) {
-        Tile tile = tiles.get(tileId);
-        if (tile != null) {
-            return tile.getY();
-        }
-        return -1;
     }
 }

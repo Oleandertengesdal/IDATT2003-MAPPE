@@ -9,9 +9,15 @@ import static idi.edu.idatt.mappe.validators.TileValidator.validateTileAction;
  * Represents a tile on the board
  */
 public class Tile {
+
     private Tile nextTile;
     private int tileId;
     private TileAction landAction;
+
+    // Values for LUDO game.
+    private boolean safeZone = false;
+    private boolean isDisabled = false;
+
     private int x; // x-coordinate on the board
     private int y; // y-coordinate on the board
 
@@ -57,7 +63,6 @@ public class Tile {
      * @param player The player who is leaving the tile
      */
     public void leavePlayer(Player player) {
-        // TODO: Implement
     }
 
     /**
@@ -162,5 +167,42 @@ public class Tile {
     public void setCoordinates(int x, int y) {
         this.x = x;
         this.y = y;
+    }
+
+    /**
+     * Returns whether the tile is a safe zone
+     *
+     * @return True if the tile is a safe zone, false otherwise
+     */
+    public boolean isSafeZone() {
+        return safeZone;
+    }
+
+
+    /**
+     * Sets whether the tile is a safe zone
+     *
+     * @param safeZone True if the tile is a safe zone, false otherwise
+     */
+    public void setSafeZone(boolean safeZone) {
+        this.safeZone = safeZone;
+    }
+
+    /**
+     * Returns whether the tile is disabled
+     *
+     * @return True if the tile is disabled, false otherwise
+     */
+    public boolean isDisabled() {
+        return isDisabled;
+    }
+
+    /**
+     * Sets whether the tile is disabled
+     *
+     * @param isDisabled True if the tile is disabled, false otherwise
+     */
+    public void setDisabled(boolean isDisabled) {
+        this.isDisabled = isDisabled;
     }
 }

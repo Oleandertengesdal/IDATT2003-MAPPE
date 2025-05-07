@@ -1,6 +1,8 @@
 package idi.edu.idatt.mappe.models;
 
 import idi.edu.idatt.mappe.models.dice.Dice;
+import idi.edu.idatt.mappe.models.enums.GameState;
+import idi.edu.idatt.mappe.models.enums.GameType;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -10,8 +12,10 @@ public class BoardGame {
     private Player currentPlayer;
     private List<Player> players;
     private Dice dice;
+
     private GameState gameState = GameState.NOT_STARTED;
     private boolean finished = false;
+    private GameType gameType;
 
     //List to store observers
     private List<BoardGameObserver> observers = new ArrayList<>();
@@ -20,8 +24,9 @@ public class BoardGame {
     /**
      * Creates a new board game with no players
      */
-    public BoardGame() {
+    public BoardGame(GameType gameType) {
         players = new ArrayList<>();
+        this.gameType = gameType;
     }
 
     /**
@@ -85,7 +90,7 @@ public class BoardGame {
      * @param size The size of the board
      */
     public void createBoard(int size) {
-        board = new Board(size);
+        board = new Board(size, gameType);
     }
 
     /**
@@ -158,8 +163,30 @@ public class BoardGame {
      * Starts the game
      */
     public void startGame() {
-        for (Player player : players) {
-            player.placeOnTile(board.getTileByIndex(1));
+
+        switch (gameType) {
+            case GameType.LUDO -> {
+                for (int i = 0; i < players.size(); i++) {
+                    Player player = players.get(i);
+                    int startingTileIndex;
+
+                    switch (i) {
+                        case 0 -> startingTileIndex = 77;
+                        case 1 -> startingTileIndex = 81;
+                        case 2 -> startingTileIndex = 85;
+                        case 3 -> startingTileIndex = 89;
+                        default -> startingTileIndex = 77;
+                    }
+
+                    player.setCurrentTile(board.getTileByIndex(startingTileIndex));
+                }
+            }
+            case GameType.SNAKES_AND_LADDERS ->
+                players.forEach(player -> player.setCurrentTile(board.getTileByIndex(1)));
+
+            default ->
+                players.forEach(player -> player.setCurrentTile(board.getTileByIndex(2)));
+
         }
         notifyGameStateChanged(GameState.STARTED);
     }
@@ -178,10 +205,8 @@ public class BoardGame {
         }
         player.placeOnTile(board.getTileByIndex(newIndex));
 
-        // Notify observers about the move
         notifyPlayerMoved(player, steps);
 
-        // Check for game completion
         if (player.getCurrentTile().getIndex() == board.getTiles().size()) {
             finished = true;
             Player winner = getWinner();
@@ -259,5 +284,53 @@ public class BoardGame {
      */
     public GameState getGameState() {
         return gameState;
+    }
+
+    /**
+     * Sets the game state
+     *
+     * @param gameState The game state to set
+     */
+    public void setGameState(GameState gameState) {
+        this.gameState = gameState;
+    }
+
+    /**
+     * Returns the game type
+     *
+     * @return The game type
+     */
+    public GameType getGameType() {
+        return gameType;
+    }
+
+    /**
+     * Sets the game type
+     *
+     * @param gameType The game type to set
+     */
+    public void setGameType(GameType gameType) {
+        this.gameType = gameType;
+    }
+
+    /**
+     * Notify observers of a player winning
+     * @param player The player who won the game
+     */
+    public void notifyObserversOfWinner(Player player) {
+        for (BoardGameObserver observer : observers) {
+            observer.onGameWinner(player);
+        }
+    }
+
+    /**
+     * Notify observers of a capture event
+     * @param player The player who captured
+     * @param otherPlayer The player who was captured
+     */
+    public void notifyObserversOfCapture(Player player, Player otherPlayer) {
+        for (BoardGameObserver observer : observers) {
+            observer.onPlayerCaptured(player, otherPlayer);
+        }
     }
 }

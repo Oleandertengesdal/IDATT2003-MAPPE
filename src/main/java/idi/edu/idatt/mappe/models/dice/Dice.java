@@ -81,4 +81,22 @@ public class Dice {
         }
         return dice.get(dieNumber - 1).getValue();
     }
+
+    /**
+     * Retrieves the number of dice in the collection.
+     *
+     * @return the number of dice in this collection.
+     */
+    public int getNumberOfDice() {
+        return dice.size();
+    }
+
+    /**
+     * Retrieves the number of sides on the dice.
+     *
+     * @return the number of sides on the dice.
+     */
+    public int getNumberOfSides(int index) {
+        return dice.get(index).getNumberOfSides();
+    }
 }
