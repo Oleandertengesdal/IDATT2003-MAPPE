@@ -1,25 +1,33 @@
 package idi.edu.idatt.mappe.models;
 
 import idi.edu.idatt.mappe.models.dice.Dice;
+import idi.edu.idatt.mappe.models.enums.Direction;
 import idi.edu.idatt.mappe.models.enums.GameState;
 import idi.edu.idatt.mappe.models.enums.GameType;
+import idi.edu.idatt.mappe.models.enums.TokenType;
+import idi.edu.idatt.mappe.views.GameView;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.logging.Logger;
+import java.util.stream.IntStream;
 
 public class BoardGame {
     private Board board;
     private Player currentPlayer;
     private List<Player> players;
     private Dice dice;
+    private GameRules gameRules;
 
     private GameState gameState = GameState.NOT_STARTED;
     private boolean finished = false;
     private GameType gameType;
 
-    //List to store observers
     private List<BoardGameObserver> observers = new ArrayList<>();
 
+    private static final Logger logger = Logger.getLogger(BoardGame.class.getName());
 
     /**
      * Creates a new board game with no players
@@ -85,11 +93,12 @@ public class BoardGame {
     }
 
     /**
-     *  Creates a new board with the given size
+     * Creates a new board with the given size
      *
      * @param size The size of the board
      */
     public void createBoard(int size) {
+
         board = new Board(size, gameType);
     }
 
@@ -123,28 +132,18 @@ public class BoardGame {
         player.placeOnTile(board.getTileByIndex(1));
     }
 
-
     /**
-     *  Plays the game
+     * Plays the game
      */
     public void play() {
         int steps = dice.roll();
-        movePlayer(currentPlayer, steps);
-    }
 
-    /**
-     * Plays one round of the game
-     */
-    public void playOneRound() {
-        for (Player player : players) {
-            int steps = dice.roll();
-            movePlayer(player, steps);
-
-            if (player.getCurrentTile().getIndex() == board.getTiles().size()) {
-                finished = true;
-                break;
-            }
+        // Check for extra turn rule
+        if (gameRules != null && gameRules.isExtraThrowOnMax() && steps == gameRules.getMaxRoll()) {
+            notifyExtraTurn(currentPlayer);
         }
+
+        movePlayer(currentPlayer, steps);
     }
 
     /**
@@ -163,30 +162,27 @@ public class BoardGame {
      * Starts the game
      */
     public void startGame() {
-
         switch (gameType) {
-            case GameType.LUDO -> {
+            case SNAKES_AND_LADDERS:
+                players.forEach(player -> player.setCurrentTile(board.getTileByIndex(1)));
+                break;
+            case THE_LOST_DIAMOND:
+                // Players can choose between Cairo (tile 1) and Tangier (tile 2)
+                // For simplicity, alternate between the two starting cities
                 for (int i = 0; i < players.size(); i++) {
                     Player player = players.get(i);
-                    int startingTileIndex;
-
-                    switch (i) {
-                        case 0 -> startingTileIndex = 77;
-                        case 1 -> startingTileIndex = 81;
-                        case 2 -> startingTileIndex = 85;
-                        case 3 -> startingTileIndex = 89;
-                        default -> startingTileIndex = 77;
+                    if (i % 2 == 0) {
+                        player.setCurrentTile(board.getTileByIndex(1)); // Cairo
+                        logger.info(player.getName() + " starts in Cairo");
+                    } else {
+                        player.setCurrentTile(board.getTileByIndex(2)); // Tangier
+                        logger.info(player.getName() + " starts in Tangier");
                     }
-
-                    player.setCurrentTile(board.getTileByIndex(startingTileIndex));
                 }
-            }
-            case GameType.SNAKES_AND_LADDERS ->
+                break;
+            default:
                 players.forEach(player -> player.setCurrentTile(board.getTileByIndex(1)));
-
-            default ->
-                players.forEach(player -> player.setCurrentTile(board.getTileByIndex(2)));
-
+                break;
         }
         notifyGameStateChanged(GameState.STARTED);
     }
@@ -207,6 +203,26 @@ public class BoardGame {
 
         notifyPlayerMoved(player, steps);
 
+        // Apply special rules if applicable
+        if (gameRules != null) {
+            Tile currentTile = player.getCurrentTile();
+
+            // Check for ladder action with extra turn rule
+            if (gameRules.isExtraTurnOnLadder() &&
+                    currentTile.getLandAction() != null &&
+                    currentTile.getLandAction().getClass().getSimpleName().contains("LadderTileAction")) {
+                notifyExtraTurn(player);
+            }
+
+            // Check for snake action with skip turn rule
+            if (gameRules.isSkipTurnOnSnake() &&
+                    currentTile.getLandAction() != null &&
+                    currentTile.getLandAction().getClass().getSimpleName().contains("SnakeTileAction")) {
+                notifySkipTurn(player);
+            }
+        }
+
+        // Check if game is finished
         if (player.getCurrentTile().getIndex() == board.getTiles().size()) {
             finished = true;
             Player winner = getWinner();
@@ -216,7 +232,6 @@ public class BoardGame {
             }
         }
     }
-
 
     /**
      * Returns whether the game is finished
@@ -271,9 +286,29 @@ public class BoardGame {
      * Notify all observers about the game winner
      * @param winner The winning player
      */
-    private void notifyGameWinner(Player winner) {
+    public void notifyGameWinner(Player winner) {
         for (BoardGameObserver observer : observers) {
             observer.onGameWinner(winner);
+        }
+    }
+
+    /**
+     * Notify all observers that a player gets an extra turn
+     * @param player The player who gets an extra turn
+     */
+    private void notifyExtraTurn(Player player) {
+        for (BoardGameObserver observer : observers) {
+            observer.onPlayerExtraTurn(player);
+        }
+    }
+
+    /**
+     * Notify all observers that a player must skip their next turn
+     * @param player The player who must skip their turn
+     */
+    private void notifySkipTurn(Player player) {
+        for (BoardGameObserver observer : observers) {
+            observer.onPlayerSkipTurn(player);
         }
     }
 
@@ -314,6 +349,25 @@ public class BoardGame {
     }
 
     /**
+     * Gets the game rules configuration
+     *
+     * @return The current game rules
+     */
+    public GameRules getGameRules() {
+        return gameRules;
+    }
+
+    /**
+     * Sets the game rules configuration
+     *
+     * @param gameRules The rules to apply to this game
+     */
+    public void setGameRules(GameRules gameRules) {
+        this.gameRules = gameRules;
+    }
+
+
+    /**
      * Notify observers of a player winning
      * @param player The player who won the game
      */
@@ -331,6 +385,144 @@ public class BoardGame {
     public void notifyObserversOfCapture(Player player, Player otherPlayer) {
         for (BoardGameObserver observer : observers) {
             observer.onPlayerCaptured(player, otherPlayer);
+        }
+    }
+
+    /**
+     * Notify observers of a player getting an extra tur
+     *
+     * @param currentPlayer The player who gets an extra turn
+     */
+    public void notifyObserversOfExtraTurn(Player currentPlayer) {
+        for (BoardGameObserver observer : observers) {
+            observer.onPlayerExtraTurn(currentPlayer);
+        }
+    }
+
+    public void notifyObserversOfSwap(Player player, Player otherPlayer, int playerTileIndex, int otherPlayerTileIndex) {
+        for (BoardGameObserver observer : observers) {
+            if (observer instanceof GameView) {
+                ((GameView) observer).logGameEvent(
+                        player.getName() + " swapped positions with " +
+                                otherPlayer.getName() + " (from " + playerTileIndex +
+                                " to " + otherPlayerTileIndex + ")!"
+                );
+            }
+        }
+    }
+
+    /**
+     * Processes a player's move to a specific destination in The Lost Diamond
+     *
+     * @param player The player making the move
+     * @param destinationTile The destination tile
+     * @return True if the move was successful
+     */
+    public boolean processLostDiamondMove(Player player, Tile destinationTile) {
+        if (gameType != GameType.THE_LOST_DIAMOND) {
+            throw new IllegalStateException("This method is only for The Lost Diamond game");
+        }
+
+        Tile currentTile = player.getCurrentTile();
+
+        if (!currentTile.getConnections().containsValue(destinationTile)) {
+            return false;
+        }
+
+        Direction direction = null;
+        for (Map.Entry<Direction, Tile> entry : currentTile.getConnections().entrySet()) {
+            if (entry.getValue().equals(destinationTile)) {
+                direction = entry.getKey();
+                break;
+            }
+        }
+
+        int travelCost = currentTile.getTravelCost(direction);
+
+        if (player.getMoney() < travelCost) {
+            return false;
+        }
+
+        if (travelCost > 0) {
+            player.spendMoney(travelCost);
+        }
+
+        player.placeOnTile(destinationTile);
+
+        notifyPlayerMoved(player, 0);
+
+        checkLostDiamondWinCondition(player);
+
+        return true;
+    }
+
+    /**
+     * Processes a token reveal action
+     *
+     * @param player The player revealing the token
+     * @return The revealed token, or null if the action couldn't be performed
+     */
+    public TokenType processTokenReveal(Player player) {
+        if (gameType != GameType.THE_LOST_DIAMOND) {
+            throw new IllegalStateException("This method is only for The Lost Diamond game");
+        }
+
+        Tile currentTile = player.getCurrentTile();
+
+        if (!currentTile.isCity() || !currentTile.hasToken()) {
+            return null;
+        }
+
+        TokenType revealedToken = player.revealToken();
+
+        if (revealedToken != null) {
+            notifyTokenRevealed(player, revealedToken);
+
+            if (revealedToken == TokenType.DIAMOND) {
+                notifyDiamondFound(player);
+            }
+        }
+
+        return revealedToken;
+    }
+
+    /**
+     * Checks win condition for The Lost Diamond game
+     *
+     * @param player The player to check
+     */
+    private void checkLostDiamondWinCondition(Player player) {
+        if (player.hasDiamond() && player.getCurrentTile().isStartingCity()) {
+            finished = true;
+            notifyGameWinner(player);
+            notifyGameStateChanged(GameState.FINISHED);
+        }
+    }
+
+    /**
+     * Notify observers that a token was revealed
+     *
+     * @param player The player who revealed the token
+     * @param tokenType The type of token revealed
+     */
+    private void notifyTokenRevealed(Player player, TokenType tokenType) {
+        for (BoardGameObserver observer : observers) {
+            if (observer instanceof LostDiamondObserver) {
+                ((LostDiamondObserver) observer).onTokenRevealed(player, tokenType);
+            }
+        }
+    }
+
+    /**
+     * Notify observers that the diamond was found
+     *
+     * @param player The player who found the diamond
+     */
+    private void notifyDiamondFound(Player player) {
+        for (BoardGameObserver observer : observers) {
+            if (observer instanceof LostDiamondObserver) {
+                ((LostDiamondObserver) observer).onDiamondFound(player);
+            }
         }
     }
 }
