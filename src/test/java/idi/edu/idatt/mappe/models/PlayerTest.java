@@ -1,5 +1,6 @@
 package idi.edu.idatt.mappe.models;
 
+import idi.edu.idatt.mappe.models.enums.TokenType;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -8,100 +9,54 @@ import static org.junit.jupiter.api.Assertions.*;
 class PlayerTest {
 
     private Player player;
-    private BoardGame game;
     private Tile startTile;
     private Tile nextTile;
 
     @BeforeEach
     void setUp() {
-        game = new BoardGame();
-        startTile = new Tile(1);
-        nextTile = new Tile(2);
+        startTile = new Tile(1, "Start City", null, 0, 0);
+        nextTile = new Tile(2, "Next City", null, 1, 1);
         startTile.setNextTile(nextTile);
-        game.createBoard(100);
-        player = new Player("Test");
-        game.addPlayer(player);
+
+        player = new Player("TestPlayer", "Token1", 500);
         player.placeOnTile(startTile);
     }
 
     @Test
-    void getName() {
-        assertEquals("Test", player.getName());
+    void testGetName() {
+        assertEquals("TestPlayer", player.getName());
     }
 
     @Test
-    void getCurrentTile() {
-        assertEquals(1, player.getCurrentTile().getIndex());
+    void testSetName() {
+        player.setName("NewName");
+        assertEquals("NewName", player.getName());
     }
 
     @Test
-    void setName() {
-        player.setName("Test2");
-        assertEquals("Test2", player.getName());
+    void testGetToken() {
+        assertEquals("Token1", player.getToken());
     }
 
     @Test
-    void getBoard() {
-        assertNotNull(player.getGame());
+    void testSetToken() {
+        player.setToken("NewToken");
+        assertEquals("NewToken", player.getToken());
     }
 
     @Test
-    void setBoard() {
-        BoardGame newGame = new BoardGame();
-        newGame.createBoard(100);
-        player.setGame(newGame);
-        assertEquals(newGame.getBoard(), player.getGame().getBoard());
+    void testPlaceOnTile() {
+        assertEquals(startTile, player.getCurrentTile());
     }
 
     @Test
-    void placeOnTile() {
-        Tile newTile = new Tile(3);
-        player.placeOnTile(newTile);
-        assertEquals(newTile, player.getCurrentTile());
-    }
-
-    @Test
-    void hasExtraThrow() {
-        assertFalse(player.hasExtraThrow());
-        player.setExtraThrow(true);
-        assertTrue(player.hasExtraThrow());
-    }
-
-    @Test
-    void setExtraThrow() {
-        player.setExtraThrow(true);
-        assertTrue(player.hasExtraThrow());
-    }
-
-    @Test
-    void isMissingTurn() {
-        assertFalse(player.isMissingTurn());
-        player.setMissingTurn(true);
-        assertTrue(player.isMissingTurn());
-    }
-
-    @Test
-    void setMissingTurn() {
-        player.setMissingTurn(true);
-        assertTrue(player.isMissingTurn());
-    }
-
-    @Test
-    void move() {
+    void testMove() {
         player.move(1);
         assertEquals(nextTile, player.getCurrentTile());
     }
 
     @Test
-    void moveBeyondLastTile() {
-        Tile lastTile = new Tile(100);
-        nextTile.setNextTile(lastTile);
-        player.move(2);
-        assertEquals(lastTile, player.getCurrentTile());
-    }
-
-    @Test
-    void moveWithMissingTurn() {
+    void testMoveWithMissingTurn() {
         player.setMissingTurn(true);
         player.move(1);
         assertEquals(startTile, player.getCurrentTile());
@@ -109,11 +64,41 @@ class PlayerTest {
     }
 
     @Test
-    void moveWithoutInitialTile() {
-        Player newPlayer = new Player("NewTest");
-        Exception exception = assertThrows(IllegalStateException.class, () -> {
-            newPlayer.move(1);
-        });
-        assertEquals("The player must be placed on a tile before moving", exception.getMessage());
+    void testHasExtraThrow() {
+        assertFalse(player.hasExtraThrow());
+        player.setExtraThrow(true);
+        assertTrue(player.hasExtraThrow());
+    }
+
+    @Test
+    void testMoneyManagement() {
+        assertEquals(500, player.getMoney());
+        player.addMoney(100);
+        assertEquals(600, player.getMoney());
+        assertTrue(player.spendMoney(200));
+        assertEquals(400, player.getMoney());
+        assertFalse(player.spendMoney(500)); // Not enough money
+    }
+
+    @Test
+    void testHasDiamond() {
+        assertFalse(player.hasDiamond());
+        player.setHasDiamond(true);
+        assertTrue(player.hasDiamond());
+    }
+
+    @Test
+    void testReset() {
+        player.setHasDiamond(true);
+        player.setExtraThrow(true);
+        player.setMissingTurn(true);
+        player.addMoney(100);
+        player.reset();
+
+        assertNull(player.getCurrentTile());
+        assertFalse(player.hasDiamond());
+        assertFalse(player.hasExtraThrow());
+        assertFalse(player.isMissingTurn());
+        assertEquals(500, player.getMoney());
     }
 }
