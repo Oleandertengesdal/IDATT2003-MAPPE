@@ -2,7 +2,8 @@ package idi.edu.idatt.mappe.views;
 
 import idi.edu.idatt.mappe.models.*;
 import idi.edu.idatt.mappe.models.enums.GameState;
-import idi.edu.idatt.mappe.services.AnimationService;
+import idi.edu.idatt.mappe.models.enums.GameType;
+import idi.edu.idatt.mappe.services.AnimationController;
 import idi.edu.idatt.mappe.services.ColorService;
 import idi.edu.idatt.mappe.services.TokenService;
 import idi.edu.idatt.mappe.views.game.*;
@@ -13,10 +14,7 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
-import javafx.scene.text.Font;
-import javafx.scene.text.FontWeight;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.logging.Logger;
@@ -29,24 +27,21 @@ import java.util.logging.Logger;
 public class GameView extends BorderPane implements BoardGameObserver {
     private static final Logger logger = Logger.getLogger(GameView.class.getName());
 
-    private final double MIN_BOARD_WIDTH = 720;
-    private final double MIN_BOARD_HEIGHT = 650;
-    private final double CONTROL_PANEL_WIDTH = 280;
-
-    private final TokenService tokenService;
     private final ColorService colorService;
-    private final AnimationService animationService;
 
-    private final Pane boardPane;
     private final BoardView boardView;
     private final PlayerTokenView playerTokenView;
     private final DiceView diceView;
     private final PlayerStatusPanelView playerStatusView;
     private final GameLogView gameLogView;
 
-    private Button rollDiceButton;
+    private Button actionButton;
 
     private final Board board;
+
+    private Runnable onResetGame;
+    private Runnable onReturnToMainMenu;
+
 
     /**
      * Creates a new GameView.
@@ -56,20 +51,22 @@ public class GameView extends BorderPane implements BoardGameObserver {
     public GameView(Board board) {
         this.board = board;
 
-        this.tokenService = new TokenService();
+        TokenService tokenService = new TokenService();
         this.colorService = new ColorService();
-        this.animationService = new AnimationService();
+        AnimationController animationController = new AnimationController();
 
-        boardPane = new Pane();
+        Pane boardPane = new Pane();
         boardPane.getStyleClass().add("board-pane");
 
+        double MIN_BOARD_WIDTH = 720;
+        double MIN_BOARD_HEIGHT = 650;
         boardView = new BoardView(boardPane, colorService, board, MIN_BOARD_WIDTH, MIN_BOARD_HEIGHT);
-        playerTokenView = new PlayerTokenView(boardPane, tokenService, animationService, MIN_BOARD_WIDTH, MIN_BOARD_HEIGHT);
+        playerTokenView = new PlayerTokenView(boardPane, tokenService, animationController, MIN_BOARD_WIDTH, MIN_BOARD_HEIGHT);
 
         playerTokenView.setBoard(board);
         playerTokenView.setBoardView(boardView);
 
-        diceView = new DiceView(animationService);
+        diceView = new DiceView(animationController);
         playerStatusView = new PlayerStatusPanelView(tokenService);
         gameLogView = new GameLogView();
 
@@ -84,6 +81,24 @@ public class GameView extends BorderPane implements BoardGameObserver {
     }
 
     /**
+     * Sets the callback to handle game reset requests.
+     *
+     * @param onResetGame Callback to execute when a game reset is requested
+     */
+    public void setOnResetGame(Runnable onResetGame) {
+        this.onResetGame = onResetGame;
+    }
+
+    /**
+     * Sets the callback to handle returning to the main menu.
+     *
+     * @param onReturnToMainMenu Callback to execute when a return to main menu is requested
+     */
+    public void setOnReturnToMainMenu(Runnable onReturnToMainMenu) {
+        this.onReturnToMainMenu = onReturnToMainMenu;
+    }
+
+    /**
      * Creates the right control panel with game controls, player status, and game log.
      *
      * @return The right control panel as a VBox
@@ -91,6 +106,7 @@ public class GameView extends BorderPane implements BoardGameObserver {
     private VBox createRightControlPanel() {
         VBox controlPanel = new VBox(15);
         controlPanel.setPadding(new Insets(20));
+        double CONTROL_PANEL_WIDTH = 280;
         controlPanel.setPrefWidth(CONTROL_PANEL_WIDTH);
         controlPanel.getStyleClass().add("game-controls");
 
@@ -100,10 +116,12 @@ public class GameView extends BorderPane implements BoardGameObserver {
         Label controlsLabel = new Label("Game Controls");
         controlsLabel.getStyleClass().add("game-controls-label");
 
-        rollDiceButton = new Button("Roll Dice & Move");
-        rollDiceButton.setPrefWidth(CONTROL_PANEL_WIDTH - 40);
-        rollDiceButton.getStyleClass().add("button-primary");
-        rollDiceButton.setDisable(true);
+        // Update button text based on game type
+        String buttonText = getActionButtonText();
+        actionButton = new Button(buttonText);
+        actionButton.setPrefWidth(CONTROL_PANEL_WIDTH - 40);
+        actionButton.getStyleClass().add("button-primary");
+        actionButton.setDisable(true); // Start with button disabled
 
         Label playerStatusLabel = new Label("Players");
         playerStatusLabel.getStyleClass().add("game-controls-label");
@@ -114,7 +132,7 @@ public class GameView extends BorderPane implements BoardGameObserver {
         controlPanel.getChildren().addAll(
                 gameTitleLabel,
                 controlsLabel,
-                rollDiceButton,
+                actionButton,
                 new Separator(),
                 playerStatusLabel,
                 playerStatusView,
@@ -129,24 +147,46 @@ public class GameView extends BorderPane implements BoardGameObserver {
     }
 
     /**
-     * Sets the roll dice button action.
+     * Gets the appropriate action button text based on the game type
+     *
+     * @return The button text
+     */
+    private String getActionButtonText() {
+        if (board.getGameType() == GameType.THE_LOST_DIAMOND) {
+            return "Take Turn";
+        } else {
+            return "Roll Dice & Move";
+        }
+    }
+
+    /**
+     * Sets the action button action.
      *
      * @param action The action to perform when the button is clicked
      */
     public void setRollDiceAction(Runnable action) {
-        rollDiceButton.setOnAction(e -> {
-            rollDiceButton.setDisable(true);
+        actionButton.setOnAction(e -> {
+            setRollDiceButtonEnabled(false);
             action.run();
         });
     }
 
     /**
-     * Enables or disables the roll dice button.
+     * Enables or disables the action button.
+     * This method is thread-safe and will ensure UI updates happen on the JavaFX thread.
      *
      * @param enabled Whether the button should be enabled
      */
     public void setRollDiceButtonEnabled(boolean enabled) {
-        rollDiceButton.setDisable(!enabled);
+        if (Platform.isFxApplicationThread()) {
+            actionButton.setDisable(!enabled);
+            logger.fine("Action button " + (enabled ? "enabled" : "disabled") + " on FX thread");
+        } else {
+            Platform.runLater(() -> {
+                actionButton.setDisable(!enabled);
+                logger.fine("Action button " + (enabled ? "enabled" : "disabled") + " via runLater");
+            });
+        }
     }
 
     /**
@@ -158,9 +198,7 @@ public class GameView extends BorderPane implements BoardGameObserver {
         Color playerColor = colorService.getPlayerColor(player);
 
         playerTokenView.addPlayerToken(player, playerColor);
-
         playerStatusView.addPlayer(player, playerColor);
-
         gameLogView.logGameEvent(player.getName() + " joined the game with token: " + player.getToken());
 
         logger.info("Added player: " + player.getName());
@@ -172,9 +210,7 @@ public class GameView extends BorderPane implements BoardGameObserver {
      * @param diceValues The values of the dice to display
      */
     public void updateDiceDisplay(List<Integer> diceValues) {
-        diceView.updateDiceDisplay(diceValues, () -> {
-            setRollDiceButtonEnabled(true);
-        });
+        diceView.updateDiceDisplay(diceValues);
     }
 
     /**
@@ -207,7 +243,7 @@ public class GameView extends BorderPane implements BoardGameObserver {
     }
 
     /**
-     * Shows a winner dialog.
+     * Shows a winner dialog with options to return to main menu or play again.
      *
      * @param winner The winning player
      */
@@ -224,7 +260,56 @@ public class GameView extends BorderPane implements BoardGameObserver {
             alert.getButtonTypes().setAll(returnToMainButton, replayButton);
 
             Optional<ButtonType> result = alert.showAndWait();
+
+            if (result.isPresent()) {
+                ButtonType selectedButton = result.get();
+
+                if (selectedButton == returnToMainButton) {
+                    logger.info("User chose to return to main menu");
+                    if (onReturnToMainMenu != null) {
+                        onReturnToMainMenu.run();
+                    } else {
+                        logger.warning("Return to main menu callback not set");
+                    }
+                } else if (selectedButton == replayButton) {
+                    logger.info("User chose to play again");
+                    if (onResetGame != null) {
+                        onResetGame.run();
+                    } else {
+                        logger.warning("Reset game callback not set");
+                    }
+                }
+            }
         });
+    }
+
+    /**
+     * Updates the player's money display.
+     *
+     * @param player The player to update
+     */
+    public void updatePlayerMoney(Player player) {
+        if (player == null) return;
+
+        if (board.getGameType() == GameType.THE_LOST_DIAMOND) {
+            playerStatusView.updatePlayerMoney(player);
+        } else {
+            playerStatusView.updatePlayerStatus(player);
+        }
+    }
+
+    /**
+     * Initializes the game view based on the game type.
+     * This method should be called after the game view is created.
+     */
+    public void initializeForGameType() {
+        if (board.getGameType() == GameType.THE_LOST_DIAMOND) {
+            playerStatusView.showMoneyInsteadOfPosition(true);
+            actionButton.setText("Take Turn");
+        } else {
+            playerStatusView.showMoneyInsteadOfPosition(false);
+            actionButton.setText("Roll Dice & Move");
+        }
     }
 
     /**
@@ -245,17 +330,32 @@ public class GameView extends BorderPane implements BoardGameObserver {
         return colorService;
     }
 
+    public void refreshBoardView() {
+        boardView.updateTokens();
+    }
 
-    // BoardGameObserver implementation
 
+    /**
+     * On player moved event.
+     */
     @Override
     public void onPlayerMoved(Player player, int steps) {
-        logGameEvent(player.getName() + " moved " + steps + " steps to tile " +
-                (player.getCurrentTile() != null ? player.getCurrentTile().getIndex() : "unknown"));
+        String message;
+        if (board.getGameType() == GameType.THE_LOST_DIAMOND) {
+            message = player.getName() + " moved to " +
+                    (player.getCurrentTile() != null ? player.getCurrentTile().getName() : "unknown location");
+        } else {
+            message = player.getName() + " moved " + steps + " steps to tile " +
+                    (player.getCurrentTile() != null ? player.getCurrentTile().getIndex() : "unknown");
+        }
 
+        logGameEvent(message);
         Platform.runLater(() -> updatePlayerPosition(player));
     }
 
+    /**
+     * On game state changed event.
+     */
     @Override
     public void onGameStateChanged(GameState gameState) {
         switch (gameState) {
@@ -274,14 +374,36 @@ public class GameView extends BorderPane implements BoardGameObserver {
         }
     }
 
+    /**
+     * On player turn changed event.
+     */
     @Override
     public void onGameWinner(Player winner) {
         logGameEvent("🏆 " + winner.getName() + " has won the game! 🏆");
         showWinnerDialog(winner);
     }
 
+    /**
+     * On player captured event.
+     */
     @Override
     public void onPlayerCaptured(Player captor, Player victim) {
-        // TODO: implement later.
+    }
+
+    /**
+     * On player extra turn event.
+     */
+    @Override
+    public void onPlayerExtraTurn(Player player) {
+        logGameEvent(player.getName() + " gets an extra turn!");
+        setRollDiceButtonEnabled(true);
+    }
+
+    /**
+     * On player skip turn event.
+     */
+    @Override
+    public void onPlayerSkipTurn(Player player) {
+        logGameEvent(player.getName() + " loses a turn!");
     }
 }
