@@ -1,5 +1,7 @@
 package idi.edu.idatt.mappe.models;
 
+import idi.edu.idatt.mappe.models.enums.TokenType;
+
 import java.util.logging.Logger;
 
 /**
@@ -17,6 +19,11 @@ public class Player {
     private boolean extraThrow;
     private boolean missingTurn;
 
+    private int money;
+    private int startingMoney = 300;
+    private boolean hasDiamond = false;
+
+
     private static final Logger logger = Logger.getLogger(Player.class.getName());
 
     /**
@@ -30,6 +37,23 @@ public class Player {
         this.missingTurn = false;
         this.extraThrow = false;
     }
+
+    /**
+     * Creates a new player with the given name, token, and money
+     *
+     * @param name The player's name
+     * @param token The player's token
+     * @param startingMoney The amount of money to start with
+     */
+    public Player(String name, String token, int startingMoney) {
+        this.name = name;
+        this.token = token;
+        this.startingMoney = startingMoney;
+        this.money = startingMoney;
+        this.missingTurn = false;
+        this.extraThrow = false;
+    }
+
 
     public Player(String name) {
         this(name, "default");
@@ -175,7 +199,7 @@ public class Player {
         for (int i = 0; i < steps; i++) {
             if (newTile.getNextTile() == null) {
                 // Player has reached or passed the last tile
-                System.out.println(name + " has reached the end of the game!");
+                logger.warning(name + " has reached the end of the game!");
                 return;
             }
             newTile = newTile.getNextTile();
@@ -198,20 +222,107 @@ public class Player {
     }
 
     /**
-     * Returns whether the player has reached home
+     * Gets the player's current money
      *
-     * @return Whether the player has reached home
+     * @return The player's money
      */
-    public boolean hasReachedHome() {
-        return hasReachedHome;
+    public int getMoney() {
+        return money;
     }
 
     /**
-     * Sets whether the player has reached home
+     * Sets the player's money
      *
-     * @param hasReachedHome Whether the player has reached home
+     * @param money The new amount of money
      */
-    public void setHasReachedHome(boolean hasReachedHome) {
-        this.hasReachedHome = hasReachedHome;
+    public void setMoney(int money) {
+        int oldMoney = this.money;
+        this.money = money;
+        logger.info(name + " money changed from " + oldMoney + " to " + money);
     }
+
+    /**
+     * Gets the player's starting money amount
+     *
+     * @return The starting money amount
+     */
+    public int getStartingMoney() {
+        return startingMoney;
+    }
+
+    /**
+     * Adds money to the player's total
+     *
+     * @param amount The amount to add
+     */
+    public void addMoney(int amount) {
+        this.money += amount;
+        logger.info(name + " gained " + amount + " coins. New balance: " + money);
+    }
+
+    /**
+     * Spends money if the player has enough
+     *
+     * @param amount The amount to spend
+     */
+    public boolean spendMoney(int amount) {
+        if (money >= amount) {
+            money -= amount;
+            logger.info(name + " spent " + amount + " coins. New balance: " + money);
+            return true;
+        }
+        logger.warning(name + " tried to spend " + amount + " coins but only has " + money);
+        return false;
+    }
+
+    /**
+     * Checks if the player has the diamond
+     *
+     * @return True if the player has the diamond
+     */
+    public boolean hasDiamond() {
+        return hasDiamond;
+    }
+
+    /**
+     * Sets whether the player has the diamond
+     *
+     * @param hasDiamond True if the player has the diamond
+     */
+    public void setHasDiamond(boolean hasDiamond) {
+        this.hasDiamond = hasDiamond;
+    }
+
+    /**
+     * Reveals the token at the current tile if it's a city
+     *
+     * @return The revealed TokenType, or null if not possible
+     */
+    public TokenType revealToken() {
+        if (currentTile != null && currentTile.isCity() && currentTile.hasToken()) {
+            return currentTile.revealToken(this);
+        }
+        return null;
+    }
+
+    /**
+     * Checks if the player has won (has diamond and returned to starting city)
+     *
+     * @return True if the player has won
+     */
+    public boolean hasWon() {
+        return hasDiamond && currentTile != null && currentTile.isStartingCity();
+    }
+    /**
+     * Resets the player for a new game
+     */
+    public void reset() {
+        this.currentTile = null;
+        this.hasReachedHome = false;
+        this.extraThrow = false;
+        this.missingTurn = false;
+        this.money = startingMoney;
+        this.hasDiamond = false;
+    }
+
 }
