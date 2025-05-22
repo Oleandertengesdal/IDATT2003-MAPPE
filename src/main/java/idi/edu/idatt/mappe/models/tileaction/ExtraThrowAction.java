@@ -39,6 +39,6 @@ public class ExtraThrowAction implements TileAction {
      */
     @Override
     public void perform(Player player) {
-        // player.setExtraThrow(true);
+        player.setExtraThrow(true);
     }
 }

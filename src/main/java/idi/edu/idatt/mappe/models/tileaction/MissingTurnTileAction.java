@@ -42,6 +42,6 @@ public class MissingTurnTileAction implements TileAction {
      */
     @Override
     public void perform(Player player) {
-        //player.setMissingTurn(true);
+        player.setMissingTurn(true);
     }
 }

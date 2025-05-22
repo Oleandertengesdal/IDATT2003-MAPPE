@@ -50,7 +50,7 @@ public class RandomTeleportTileAction implements TileAction {
     @Override
     public void perform(Player player) {
         Map<Integer, Tile> boardTiles = board.getTiles();
-        Tile randomTile = boardTiles.get(random.nextInt(boardTiles.size() - 1));
+        Tile randomTile = boardTiles.get( 5 + random.nextInt(boardTiles.size() - 10));
         logger.info("Player " + player.getName() + " was teleported from " + player.getCurrentTile() + " to " + randomTile.getIndex());
         player.placeOnTile(randomTile);
     }
