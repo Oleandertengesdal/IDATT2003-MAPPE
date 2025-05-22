@@ -85,7 +85,6 @@ public class PlayerSelectionView extends BorderPane {
 
         logger.info("Initializing PlayerSelectionView");
 
-        // Apply global styles
         this.setStyle("-fx-background-color: linear-gradient(to bottom, #f5f7fa, #e5e9f0);");
 
         loadTokenImages();
@@ -97,7 +96,6 @@ public class PlayerSelectionView extends BorderPane {
      * Sets up the layout for the player selection panel.
      */
     private void setupLayout() {
-        // Create header
         VBox header = createHeader();
         this.setTop(header);
 
@@ -105,12 +103,9 @@ public class PlayerSelectionView extends BorderPane {
         contentArea.setAlignment(Pos.CENTER);
         contentArea.setPadding(new Insets(20));
 
-        // Players container with cards
         createPlayersContainer();
 
-        // Add player form
         VBox addPlayerForm = createAddPlayerForm();
-        // Add a separator between the players and the form
         Separator separator = new Separator();
         separator.setPadding(new Insets(10, 0, 10, 0));
 
@@ -123,7 +118,6 @@ public class PlayerSelectionView extends BorderPane {
 
         this.setCenter(contentArea);
 
-        // Create button bar
         HBox buttons = createButtonBar();
         this.setBottom(buttons);
     }
@@ -329,12 +323,11 @@ public class PlayerSelectionView extends BorderPane {
             entry.setSelected(true);
             playerEntries.add(entry);
 
-            // Refresh the player cards
             refreshPlayerCards();
 
             nameField.clear();
             tokenCombo.setValue(null);
-            colorCombo.setValue(AVAILABLE_COLORS.get(0));
+            colorCombo.setValue(AVAILABLE_COLORS.getFirst());
 
             logger.info("Added new player: " + name);
         });
@@ -507,7 +500,6 @@ public class PlayerSelectionView extends BorderPane {
         fileChooser.getExtensionFilters().add(
                 new FileChooser.ExtensionFilter("CSV Files", "*.csv"));
 
-        // Set initial directory to the default player directory
         try {
             File resourcesDir = fileService.getDefaultPlayerDirectory();
             if (resourcesDir.exists()) {
@@ -520,21 +512,17 @@ public class PlayerSelectionView extends BorderPane {
         File selectedFile = fileChooser.showOpenDialog(stage);
         if (selectedFile != null) {
             try {
-                // Use FileService to load players
                 List<Player> loadedPlayers = fileService.loadPlayersFromFile(selectedFile);
 
-                // Update the player controller with loaded players
                 for (Player player : loadedPlayers) {
                     playerController.addPlayer(player);
                 }
 
-                // Clear existing entries and add entries for loaded players
                 playerEntries.clear();
                 for (Player player : loadedPlayers) {
                     playerEntries.add(new PlayerSelectionEntry(player));
                 }
 
-                // Refresh the player cards
                 refreshPlayerCards();
 
                 showAlert("Players Loaded",
@@ -558,7 +546,6 @@ public class PlayerSelectionView extends BorderPane {
     private void savePlayersToCsv() {
         logger.info("Saving players to CSV");
 
-        // Collect all players from the current entries
         List<Player> currentPlayers = playerEntries.stream()
                 .map(PlayerSelectionEntry::getPlayer)
                 .collect(Collectors.toList());
@@ -576,7 +563,6 @@ public class PlayerSelectionView extends BorderPane {
                 new FileChooser.ExtensionFilter("CSV Files", "*.csv"));
         fileChooser.setInitialFileName("players.csv");
 
-        // Set initial directory to default player directory
         try {
             File resourcesDir = fileService.getDefaultPlayerDirectory();
             if (resourcesDir.exists()) {
@@ -589,7 +575,6 @@ public class PlayerSelectionView extends BorderPane {
         File selectedFile = fileChooser.showSaveDialog(stage);
         if (selectedFile != null) {
             try {
-                // Use FileService to save players
                 fileService.savePlayersToFile(selectedFile, currentPlayers);
 
                 showAlert("Players Saved",
@@ -623,7 +608,6 @@ public class PlayerSelectionView extends BorderPane {
         DialogPane dialogPane = alert.getDialogPane();
         dialogPane.setStyle("-fx-background-color: white;");
 
-        // Add different styles based on alert type
         if (alertType == Alert.AlertType.ERROR) {
             dialogPane.setStyle(dialogPane.getStyle() + "; -fx-header-color: #e74c3c;");
         } else if (alertType == Alert.AlertType.WARNING) {
