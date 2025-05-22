@@ -170,7 +170,6 @@ public class PlayerCardView extends HBox {
         tokenCombo.setPrefWidth(120);
         tokenCombo.setPromptText("Select Token");
 
-        // Add images to dropdown
         tokenCombo.setCellFactory(listView -> new ListCell<>() {
             private final ImageView imageView = new ImageView();
 
@@ -322,30 +321,4 @@ public class PlayerCardView extends HBox {
         return entry;
     }
 
-    /**
-     * Gets the selection status.
-     *
-     * @return True if selected, false otherwise
-     */
-    public boolean isSelected() {
-        return selected.get();
-    }
-
-    /**
-     * Property for selection status.
-     *
-     * @return The selection property
-     */
-    public BooleanProperty selectedProperty() {
-        return selected;
-    }
-
-    /**
-     * Sets the selection status.
-     *
-     * @param selected True to select, false to deselect
-     */
-    public void setSelected(boolean selected) {
-        this.selected.set(selected);
-    }
 }
