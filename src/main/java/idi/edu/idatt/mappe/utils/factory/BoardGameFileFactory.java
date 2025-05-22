@@ -32,7 +32,6 @@ public class BoardGameFileFactory {
 
 
         try {
-            // Generate 6 different game boards
             writer.writeBoard(createClassicSnakesAndLadders(), "src/main/resources/boards/classic_board.json", "Classic Snakes and Ladders", "A classic board game with snakes and ladders");
             writer.writeBoard(createSnakesOnlyBoard(), "src/main/resources/boards/snakes_only_board.json", "Snakes Only", "A board game with only snakes");
             writer.writeBoard(createLaddersOnlyBoard(), "src/main/resources/boards/ladders_only_board.json", "Ladders Only", "A board game with only ladders");
