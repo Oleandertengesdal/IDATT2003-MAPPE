@@ -21,7 +21,6 @@ public class PlayerSelectionEntry {
     public PlayerSelectionEntry(Player player) {
         this.player = player;
 
-        // Assign a default color based on the player's name hash
         String[] availableColors = {
                 "#e74c3c", "#3498db", "#2ecc71", "#f1c40f", "#9b59b6",
                 "#e67e22", "#1abc9c", "#34495e", "#d35400", "#16a085"
