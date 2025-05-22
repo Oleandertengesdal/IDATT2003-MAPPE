@@ -8,6 +8,16 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Class for reading player data from a CSV file.
+ * <p>
+ *     This class implements the PlayerFileReader interface and provides
+ *     functionality to load player data from a CSV file.
+ * </p>
+ *
+ * @see PlayerFileReader
+ * @version 1.0
+ */
 public class PlayerFileReaderCVS implements PlayerFileReader {
 
     /**
