@@ -1,159 +1,229 @@
 package idi.edu.idatt.mappe.views.game;
 
-import idi.edu.idatt.mappe.services.AnimationService;
+import idi.edu.idatt.mappe.services.AnimationController;
+import javafx.application.Platform;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
-import javafx.scene.effect.DropShadow;
+import javafx.scene.control.Label;
 import javafx.scene.layout.HBox;
-import javafx.scene.layout.StackPane;
+import javafx.scene.layout.Pane;
+import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
+import javafx.scene.shape.Rectangle;
+import javafx.scene.text.Font;
+import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 import java.util.logging.Logger;
 
 /**
- * View component for displaying dice.
- * Handles rendering and animating dice.
+ * View component for displaying dice in the game.
+ * Supports multiple dice with animation.
  */
-public class DiceView extends HBox {
+public class DiceView extends VBox {
     private static final Logger logger = Logger.getLogger(DiceView.class.getName());
+    private final List<DieFace> dice = new ArrayList<>();
+    private final AnimationController animationController;
 
-    private final AnimationService animationService;
-    private int numberOfDice = 0;
-    private int maxSides = 20;
-    private List<Integer> currentValues = new ArrayList<>();
-    private boolean animationInProgress = false;
+    private Runnable onAnimationComplete;
 
     /**
      * Creates a new DiceView.
      *
-     * @param animationService The animation service to use for animations
+     * @param animationController The animation service to use for dice rolling animations
      */
-    public DiceView(AnimationService animationService) {
-        this.animationService = animationService;
+    public DiceView(AnimationController animationController) {
+        this.animationController = animationController;
 
-        setAlignment(Pos.CENTER);
         setSpacing(10);
-        setPadding(new Insets(15));
-        setPrefHeight(100);
-        setStyle("-fx-background-color: #f0f0f0; -fx-border-color: #cccccc; -fx-border-width: 1px; -fx-border-radius: 5px;");
+        setPadding(new Insets(10));
+        setAlignment(Pos.CENTER);
 
         createDice(2, 6);
+
+        logger.info("DiceView initialized");
     }
 
     /**
-     * Creates dice with a specific number of dice and sides.
+     * Creates the specified number of dice with the given number of sides.
      *
-     * @param numberOfDice The number of dice to create
-     * @param sides The number of sides on each die
+     * @param numberOfDice Number of dice to create
+     * @param sides Number of sides on each die
      */
     public void createDice(int numberOfDice, int sides) {
-        this.numberOfDice = numberOfDice;
-        this.maxSides = Math.max(sides, 6);
+        logger.info("Creating " + numberOfDice + " dice with " + sides + " sides each");
 
-        List<Integer> initialValues = new ArrayList<>();
+        getChildren().clear();
+        dice.clear();
+
+        HBox diceContainer = new HBox(15);
+        diceContainer.setAlignment(Pos.CENTER);
+
         for (int i = 0; i < numberOfDice; i++) {
-            initialValues.add(1);
+            DieFace dieFace = new DieFace(sides);
+            dice.add(dieFace);
+            diceContainer.getChildren().add(dieFace);
         }
-        updateDiceVisuals(initialValues);
-        logger.info("Created " + numberOfDice + " dice with " + sides + " sides each.");
+
+        getChildren().add(diceContainer);
+
+        if (numberOfDice > 1) {
+            Label totalLabel = new Label("Total: 0");
+            totalLabel.setFont(Font.font("Arial", FontWeight.BOLD, 14));
+            totalLabel.setTextFill(Color.web("#2c3e50"));
+            getChildren().add(totalLabel);
+        }
+    }
+
+    /**
+     * Updates the dice display with new values and executes the callback after animation.
+     *
+     * @param values The values to display on the dice
+     * @param completeCallback Callback to execute after animation completes
+     */
+    public void updateDiceDisplay(List<Integer> values, Runnable completeCallback) {
+        logger.info("Updating dice display with values: " + values);
+
+        if (values == null || values.isEmpty() || values.size() != dice.size()) {
+            logger.warning("Invalid dice values provided: " + values);
+            return;
+        }
+
+        this.onAnimationComplete = completeCallback;
+
+        animateRoll(values);
     }
 
     /**
      * Updates the dice display with new values.
-     * This will animate the dice rolling before showing the final values.
-     *
-     * @param diceValues The final values of the dice
-     * @param callback The callback to run when the animation is complete
-     */
-    public void updateDiceDisplay(List<Integer> diceValues, Runnable callback) {
-        if (animationInProgress) {
-            logger.warning("Dice animation already in progress.");
-            return;
-        }
-
-        if (diceValues.size() != numberOfDice) {
-            logger.warning("Number of dice values (" + diceValues.size() +
-                    ") doesn't match number of dice (" + numberOfDice + ").");
-            return;
-        }
-
-        this.currentValues = new ArrayList<>(diceValues);
-        animationInProgress = true;
-
-        int maxValue = 0;
-        for (int value : diceValues) {
-            maxValue = Math.max(maxValue, value);
-        }
-        final int finalMaxSides = Math.max(maxValue, this.maxSides);
-
-        animationService.animateDiceRoll(
-                numberOfDice,
-                finalMaxSides,
-                this::updateDiceVisuals,
-                diceValues,
-                () -> {
-                    animationInProgress = false;
-                    if (callback != null) {
-                        callback.run();
-                    }
-                }
-        );
-    }
-
-    /**
-     * Updates the visual representation of the dice.
      *
      * @param values The values to display on the dice
      */
-    private void updateDiceVisuals(List<Integer> values) {
-        getChildren().clear();
+    public void updateDiceDisplay(List<Integer> values) {
+        updateDiceDisplay(values, null);
+    }
 
-        for (int value : values) {
-            StackPane diePane = createDieVisual(value);
-            getChildren().add(diePane);
+    /**
+     * Animates rolling the dice to the target values.
+     *
+     * @param targetValues The final values the dice should show
+     */
+    private void animateRoll(List<Integer> targetValues) {
+        final int steps = 10;
+        final int delayBetweenSteps = 50;
+
+        Random random = new Random();
+
+        new Thread(() -> {
+            try {
+                for (int step = 0; step < steps; step++) {
+                    final int currentStep = step;
+
+                    final List<Integer> randomValues = new ArrayList<>();
+                    for (DieFace die : dice) {
+                        int randomValue = random.nextInt(die.getNumberOfSides()) + 1;
+                        randomValues.add(randomValue);
+                    }
+
+                    Platform.runLater(() -> {
+                        for (int i = 0; i < dice.size(); i++) {
+                            dice.get(i).setValue(randomValues.get(i));
+                        }
+
+                        if (dice.size() > 1 && getChildren().size() > 1) {
+                            int total = randomValues.stream().mapToInt(Integer::intValue).sum();
+                            ((Label) getChildren().get(1)).setText("Total: " + total);
+                        }
+                    });
+
+                    Thread.sleep(delayBetweenSteps);
+                }
+
+                Platform.runLater(() -> {
+                    for (int i = 0; i < dice.size(); i++) {
+                        dice.get(i).setValue(targetValues.get(i));
+                    }
+
+                    if (dice.size() > 1 && getChildren().size() > 1) {
+                        int total = targetValues.stream().mapToInt(Integer::intValue).sum();
+                        ((Label) getChildren().get(1)).setText("Total: " + total);
+                    }
+
+                    if (onAnimationComplete != null) {
+                        onAnimationComplete.run();
+                    }
+                });
+
+            } catch (InterruptedException e) {
+                logger.warning("Dice animation interrupted: " + e.getMessage());
+                Thread.currentThread().interrupt();
+            }
+        }).start();
+    }
+
+    /**
+     * Inner class representing a visual die face.
+     */
+    private static class DieFace extends Pane {
+        private final int numberOfSides;
+        private final Text valueText;
+
+        /**
+         * Creates a new die face with the specified number of sides.
+         *
+         * @param sides Number of sides on the die
+         */
+        public DieFace(int sides) {
+            this.numberOfSides = sides;
+
+            Rectangle rectangle = new Rectangle(40, 40);
+            rectangle.setFill(Color.WHITE);
+            rectangle.setStroke(Color.BLACK);
+            rectangle.setArcWidth(10);
+            rectangle.setArcHeight(10);
+
+            valueText = new Text("1");
+            valueText.setFont(Font.font("Arial", FontWeight.BOLD, 18));
+            valueText.setFill(Color.ORANGERED);
+
+            valueText.setLayoutX(15);
+            valueText.setLayoutY(25);
+
+            getChildren().addAll(rectangle, valueText);
+
+            setPrefSize(40, 40);
+            setMinSize(40, 40);
+            setMaxSize(40, 40);
         }
-    }
 
-    /**
-     * Creates a visual representation of a die.
-     *
-     * @param value The value to display on the die
-     * @return A StackPane containing the die visualization
-     */
-    private StackPane createDieVisual(int value) {
-        StackPane diePane = new StackPane();
-        diePane.setMinSize(60, 60);
-        diePane.setPrefSize(60, 60);
-        diePane.setMaxSize(60, 60);
-        diePane.setStyle("-fx-background-color: white; -fx-border-color: black; -fx-border-width: 2px; -fx-border-radius: 5px;");
+        /**
+         * Gets the number of sides on this die.
+         *
+         * @return Number of sides
+         */
+        public int getNumberOfSides() {
+            return numberOfSides;
+        }
 
-        Text valueText = new Text(String.valueOf(value));
-        valueText.setStyle("-fx-font-size: 24px; -fx-font-weight: bold;");
+        /**
+         * Sets the value displayed on the die face.
+         *
+         * @param value Value to display
+         */
+        public void setValue(int value) {
+            if (value < 1 || value > numberOfSides) {
+                throw new IllegalArgumentException("Die value must be between 1 and " + numberOfSides);
+            }
+            valueText.setText(String.valueOf(value));
 
-        diePane.getChildren().add(valueText);
-        diePane.setEffect(new DropShadow(10, Color.GRAY));
-
-        return diePane;
-    }
-
-    /**
-     * Gets the current values of the dice.
-     *
-     * @return The current values of the dice
-     */
-    public List<Integer> getCurrentValues() {
-        return new ArrayList<>(currentValues);
-    }
-
-    /**
-     * Checks if a dice animation is in progress.
-     *
-     * @return True if a dice animation is in progress
-     */
-    public boolean isAnimationInProgress() {
-        return animationInProgress;
+            if (value < 10) {
+                valueText.setLayoutX(15);
+            } else {
+                valueText.setLayoutX(10);
+            }
+        }
     }
 }
