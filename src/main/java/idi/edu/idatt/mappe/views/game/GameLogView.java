@@ -20,7 +20,7 @@ public class GameLogView extends VBox {
 
     private final TextArea logArea;
     private final SimpleDateFormat timeFormat = new SimpleDateFormat("HH:mm:ss");
-    private final int maxLogEntries = 200;
+    private static  int maxLogEntries = 300;
 
     /**
      * Creates a new GameLogView.
@@ -76,22 +76,5 @@ public class GameLogView extends VBox {
         }
 
         logArea.positionCaret(logArea.getLength());
-    }
-
-    /**
-     * Clears the log.
-     */
-    public void clear() {
-        logArea.clear();
-        logger.info("Game log cleared");
-    }
-
-    /**
-     * Gets the log text.
-     *
-     * @return The current log text
-     */
-    public String getLogText() {
-        return logArea.getText();
     }
 }
