@@ -1,0 +1,10 @@
+{
+  "gameType": "SNAKES_AND_LADDERS",
+  "numberOfDice": 1,
+  "diceSides": 6,
+  "extraThrowOnMax": true,
+  "startOnlyWithMax": true,
+  "skipTurnOnSnake": true,
+  "extraTurnOnLadder": true,
+  "consecutiveSixesLimit": 3
+}
