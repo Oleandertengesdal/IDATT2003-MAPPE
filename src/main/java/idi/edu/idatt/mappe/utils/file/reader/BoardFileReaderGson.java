@@ -18,6 +18,34 @@ import java.util.Map;
 
 /**
  * Implementation of BoardFileReader using GSON
+ *
+ * <p>
+ *     This class reads a board from a JSON file using GSON
+ *     The board is deserialized from a JSON object and then returned as a Board object
+ *     The board is deserialized as follows:
+ *     {
+ *     "name": "Game Board",
+ *     "description": "A game board with tiles and actions",
+ *     "rows": 10,
+ *     "columns": 10,
+ *     "tiles": [
+ *     {
+ *     "id": 1,
+ *     "x": 0,
+ *     "y": 0,
+ *     "nextTile": 2,
+ *     "action": {
+ *     "type": "LadderAction",
+ *     "destinationTileId": 5,
+ *     "description": "Climb the ladder"
+ *     }
+ *     },
+ *     .....
+ *     }
+ *     </p>
+ *
+ * @see BoardFileReader
+ * @version 1.0
  */
 public class BoardFileReaderGson implements BoardFileReader {
 
@@ -67,7 +95,6 @@ public class BoardFileReaderGson implements BoardFileReader {
                 tilesMap.put(tileId, tile);
             }
 
-            // Set the tiles in the board
             tilesMap.forEach((key, tile) -> board.addTile(tile.getIndex(), tile));
 
             // Second pass: Set next tiles and actions
@@ -81,7 +108,6 @@ public class BoardFileReaderGson implements BoardFileReader {
                     tile.setNextTile(tilesMap.get(nextTileId));
                 }
 
-                //Tile actions
                 if (tileJson.has("action")) {
                     JsonObject actionJson = tileJson.getAsJsonObject("action");
                     String actionType = actionJson.get("type").getAsString();
