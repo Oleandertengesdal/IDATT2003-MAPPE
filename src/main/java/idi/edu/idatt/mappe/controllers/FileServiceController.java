@@ -3,15 +3,10 @@ package idi.edu.idatt.mappe.controllers;
 import idi.edu.idatt.mappe.exceptions.JsonParsingException;
 import idi.edu.idatt.mappe.exceptions.TileActionNotFoundException;
 import idi.edu.idatt.mappe.models.Board;
+import idi.edu.idatt.mappe.models.GameRules;
 import idi.edu.idatt.mappe.models.Player;
-import idi.edu.idatt.mappe.utils.file.reader.BoardFileReader;
-import idi.edu.idatt.mappe.utils.file.reader.BoardFileReaderGson;
-import idi.edu.idatt.mappe.utils.file.reader.PlayerFileReader;
-import idi.edu.idatt.mappe.utils.file.reader.PlayerFileReaderCVS;
-import idi.edu.idatt.mappe.utils.file.writer.BoardFileWriter;
-import idi.edu.idatt.mappe.utils.file.writer.BoardFileWriterGson;
-import idi.edu.idatt.mappe.utils.file.writer.PlayerFileWriter;
-import idi.edu.idatt.mappe.utils.file.writer.PlayerFileWriterCVS;
+import idi.edu.idatt.mappe.utils.file.reader.*;
+import idi.edu.idatt.mappe.utils.file.writer.*;
 
 import java.io.File;
 import java.io.IOException;
@@ -25,11 +20,16 @@ import java.util.logging.Logger;
 public class FileServiceController implements FileService {
     private static final Logger logger = Logger.getLogger(FileServiceController.class.getName());
 
-    // File readers and writers
     private final PlayerFileReader playerFileReader;
     private final PlayerFileWriter playerFileWriter;
     private final BoardFileReader boardFileReader;
     private final BoardFileWriter boardFileWriter;
+    private final GameRulesReader gameRulesReader;
+    private final GameRulesWriter gameRulesWriter;
+
+    private final String playerFilePath = "src/main/resources/players";
+    private final String boardFilePath = "src/main/resources/boards";
+    private final String rulesFilePath = "src/main/resources/rules";
 
     /**
      * Constructor for FileServiceController.
@@ -40,27 +40,9 @@ public class FileServiceController implements FileService {
         this.playerFileWriter = new PlayerFileWriterCVS();
         this.boardFileReader = new BoardFileReaderGson();
         this.boardFileWriter = new BoardFileWriterGson();
+        this.gameRulesReader = new GameRulesReaderGson();
+        this.gameRulesWriter = new GameRulesWriterGson();
         logger.info("FileServiceController initialized with default readers and writers");
-    }
-
-    /**
-     * Constructor for FileServiceController with custom reader and writer implementations.
-     *
-     * @param playerFileReader The player file reader to use
-     * @param playerFileWriter The player file writer to use
-     * @param boardFileReader The board file reader to use
-     * @param boardFileWriter The board file writer to use
-     */
-    public FileServiceController(
-            PlayerFileReader playerFileReader,
-            PlayerFileWriter playerFileWriter,
-            BoardFileReader boardFileReader,
-            BoardFileWriter boardFileWriter) {
-        this.playerFileReader = playerFileReader;
-        this.playerFileWriter = playerFileWriter;
-        this.boardFileReader = boardFileReader;
-        this.boardFileWriter = boardFileWriter;
-        logger.info("FileServiceController initialized with custom readers and writers");
     }
 
 
@@ -136,7 +118,7 @@ public class FileServiceController implements FileService {
      */
     @Override
     public File getDefaultPlayerDirectory() {
-        File resourcesDir = new File("src/main/resources/players");
+        File resourcesDir = new File(playerFilePath);
         if (!resourcesDir.exists()) {
             boolean created = resourcesDir.mkdirs();
             if (!created) {
@@ -154,7 +136,7 @@ public class FileServiceController implements FileService {
      */
     @Override
     public File getDefaultBoardDirectory() {
-        File resourcesDir = new File("src/main/resources/boards");
+        File resourcesDir = new File(boardFilePath);
         if (!resourcesDir.exists()) {
             boolean created = resourcesDir.mkdirs();
             if (!created) {
@@ -241,7 +223,6 @@ public class FileServiceController implements FileService {
      * @param name The name of the board
      * @param description The description of the board
      * @throws IOException If there's an error writing to the file
-     * @throws JsonParsingException If there's an error creating the JSON
      * @throws TileActionNotFoundException If a tile action cannot be found
      */
     @Override
@@ -254,5 +235,110 @@ public class FileServiceController implements FileService {
             logger.severe( "Error saving board to file: " + filePath);
             throw e;
         }
+    }
+
+    /**
+     * Loads game rules from a JSON file.
+     *
+     * @param file The file to load game rules from
+     * @return The loaded GameRules object
+     * @throws JsonParsingException If there's an error parsing the JSON
+     */
+    @Override
+    public GameRules loadGameRulesFromFile(File file) throws JsonParsingException {
+        logger.info("Loading game rules from file: " + file.getAbsolutePath());
+        return loadGameRulesFromPath(file.getAbsolutePath());
+    }
+
+    /**
+     * Loads game rules from a JSON file path.
+     *
+     * @param filePath The file path to load game rules from
+     * @return The loaded GameRules object
+     * @throws JsonParsingException If there's an error parsing the JSON
+     */
+    @Override
+    public GameRules loadGameRulesFromPath(String filePath) throws JsonParsingException {
+        try {
+            logger.info("Loading game rules from path: " + filePath);
+            GameRules rules = gameRulesReader.readGameRules(filePath);
+            logger.info("Game rules loaded successfully");
+            return rules;
+        } catch (JsonParsingException e) {
+            logger.warning("Error loading game rules from file: " + filePath);
+            throw e;
+        }
+    }
+
+    /**
+     * Saves game rules to a JSON file.
+     *
+     * @param rules The game rules to save
+     * @param file The file to save to
+     * @throws IOException If there's an error writing to the file
+     * @throws JsonParsingException If there's an error creating the JSON
+     */
+    @Override
+    public void saveGameRulesToFile(GameRules rules, File file) throws IOException, JsonParsingException {
+        logger.info("Saving game rules to file: " + file.getAbsolutePath());
+        saveGameRulesToPath(rules, file.getAbsolutePath());
+    }
+
+    /**
+     * Saves game rules to a JSON file path.
+     *
+     * @param rules The game rules to save
+     * @param filePath The file path to save to
+     * @throws IOException If there's an error writing to the file
+     * @throws JsonParsingException If there's an error creating the JSON
+     */
+    @Override
+    public void saveGameRulesToPath(GameRules rules, String filePath) throws IOException, JsonParsingException {
+        try {
+            logger.info("Saving game rules to path: " + filePath);
+            gameRulesWriter.writeGameRules(rules, filePath);
+            logger.info("Game rules saved successfully");
+        } catch (IOException | JsonParsingException e) {
+            logger.warning("Error saving game rules to file: " + filePath);
+            throw e;
+        }
+    }
+
+    /**
+     * Saves game rules to a JSON file.
+     *
+     * @param rules The game rules to save
+     * @param filePath The file to save to
+     * @param name The name of the rules set
+     * @throws IOException If there's an error writing to the file
+     * @throws JsonParsingException If there's an error creating the JSON
+     */
+    @Override
+    public void saveGameRulesToPath(GameRules rules, String filePath, String name) throws IOException, JsonParsingException {
+        try {
+            logger.info("Saving game rules to path: " + filePath + " with name: " + name);
+            gameRulesWriter.writeGameRules(rules, filePath);
+            logger.info("Game rules saved successfully");
+        } catch (IOException | JsonParsingException e) {
+            logger.severe("Error saving game rules to file: " + filePath);
+            throw e;
+        }
+    }
+
+    /**
+     * Gets the default directory for game rules files.
+     *
+     * @return The default directory for game rules files
+     */
+    @Override
+    public File getDefaultRulesDirectory() {
+        File resourcesDir = new File(rulesFilePath);
+        if (!resourcesDir.exists()) {
+            boolean created = resourcesDir.mkdirs();
+            if (!created) {
+                logger.warning("Failed to create default rules directory");
+            }
+        }
+        return resourcesDir;
     }
 }
