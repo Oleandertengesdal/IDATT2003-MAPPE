@@ -5,6 +5,7 @@ class BoardGame {
     - List<Player> players
     - Dice dice
     - GameState gameState
+    - GameRules gameRules
     - boolean finished
     - List<BoardGameObserver> observers
     + BoardGame()
@@ -19,7 +20,6 @@ class BoardGame {
     + void createDice(int numberOfDice, int numberOfSides)
     + void addPlayer(Player player)
     + void play()
-    + void playOneRound()
     + Player getWinner()
     + void startGame()
     + void movePlayer(Player player, int steps)
