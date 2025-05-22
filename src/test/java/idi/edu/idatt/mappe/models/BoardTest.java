@@ -1,94 +1,68 @@
 package idi.edu.idatt.mappe.models;
 
-import idi.edu.idatt.mappe.models.tileaction.LadderTileAction;
-import idi.edu.idatt.mappe.models.tileaction.TileAction;
+import idi.edu.idatt.mappe.models.enums.GameType;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+
+import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 class BoardTest {
 
-    private BoardGame game;
     private Board board;
-    private Tile startTile;
-    private Tile endTile;
 
     @BeforeEach
     void setUp() {
-        game = new BoardGame();
-        game.createBoard(100);
-        board = game.getBoard();
-        startTile = new Tile(1);
-        endTile = new Tile(100);
+        board = new Board(3, 3, GameType.SNAKES_AND_LADDERS); // 3x3 board for testing
     }
 
     @Test
-    void testCreateBoard() {
-        assertEquals(100, board.getTiles().size());
-        assertEquals(1, board.getTiles().get(1).getIndex());
-        assertEquals(100, board.getTiles().get(100).getIndex());
+    void testBoardInitialization() {
+        assertEquals(3, board.getRows());
+        assertEquals(3, board.getColumns());
+        assertEquals(GameType.SNAKES_AND_LADDERS, board.getGameType());
+        assertEquals(9, board.getTiles().size()); // 3x3 = 9 tiles
     }
 
     @Test
     void testGetTileByIndex() {
-        assertEquals(1, board.getTileByIndex(1).getIndex());
-        assertEquals(100, board.getTileByIndex(100).getIndex());
+        Tile tile = board.getTileByIndex(1);
+        assertNotNull(tile);
+        assertEquals(1, tile.getIndex());
     }
 
     @Test
     void testGetTileByIndexOutOfBounds() {
-        assertThrows(IndexOutOfBoundsException.class, () -> board.getTileByIndex(101));
+        assertThrows(IndexOutOfBoundsException.class, () -> board.getTileByIndex(10));
     }
 
     @Test
-    void testGetTileByIndexNegative() {
-        assertThrows(IndexOutOfBoundsException.class, () -> board.getTileByIndex(-1));
+    void testGetTileByCoordinates() {
+        Tile tile = board.getTileByCoordinates(0, 0);
+        assertNotNull(tile);
+        assertEquals(1, tile.getIndex()); // Top-left tile in a 3x3 board
     }
 
     @Test
-    void testGetTileByIndexAction() {
-        TileAction action = new LadderTileAction(10, "Test", board);
-        board.getTileByIndex(10).setLandAction(action);
-        assertEquals(action, board.getTileByIndex(10).getLandAction());
+    void testGetTileByCoordinatesInvalid() {
+        Tile tile = board.getTileByCoordinates(5, 5); // Out of bounds
+        assertNull(tile);
     }
 
     @Test
-    void testGetTileByIndexActionNull() {
-        assertNull(board.getTileByIndex(10).getLandAction());
+    void testAddTile() {
+        Tile newTile = new Tile(10, 2, 2);
+        board.addTile(10, newTile);
+
+        Map<Integer, Tile> tiles = board.getTiles();
+        assertTrue(tiles.containsKey(10));
+        assertEquals(newTile, tiles.get(10));
     }
 
     @Test
-    void testGetTileByIndexActionOutOfBounds() {
-        assertThrows(IndexOutOfBoundsException.class, () -> board.getTileByIndex(101).getLandAction());
+    void testSetAndGetGameType() {
+        board.setGameType(GameType.THE_LOST_DIAMOND);
+        assertEquals(GameType.THE_LOST_DIAMOND, board.getGameType());
     }
-
-    @Test
-    void testGetTileByIndexActionNegative() {
-        assertThrows(IndexOutOfBoundsException.class, () -> board.getTileByIndex(-1).getLandAction());
-    }
-
-    @Test
-    void testGetTileByIndexActionOutOfBoundsSet() {
-        assertThrows(IndexOutOfBoundsException.class, () -> board.getTileByIndex(101).setLandAction(new LadderTileAction(10, "Test", board)));
-    }
-
-    @Test
-    void testGetTileByIndexActionNegativeSet() {
-        assertThrows(IndexOutOfBoundsException.class, () -> board.getTileByIndex(-1).setLandAction(new LadderTileAction(10, "Test", board)));
-    }
-
-    @Test
-    void testGetTileByIndexActionSet() {
-        TileAction action = new LadderTileAction(10, "Test", board);
-        board.getTileByIndex(10).setLandAction(action);
-        assertEquals(action, board.getTileByIndex(10).getLandAction());
-    }
-
-    @Test
-    void testGetTileByIndexActionSetNull() {
-        board.getTileByIndex(10).setLandAction(null);
-        assertNull(board.getTileByIndex(10).getLandAction());
-    }
-
 }
