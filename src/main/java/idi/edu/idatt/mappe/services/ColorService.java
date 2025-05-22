@@ -1,9 +1,7 @@
 package idi.edu.idatt.mappe.services;
 
 import idi.edu.idatt.mappe.models.Player;
-import idi.edu.idatt.mappe.models.tileaction.TileAction;
-import idi.edu.idatt.mappe.models.tileaction.LadderTileAction;
-import idi.edu.idatt.mappe.models.tileaction.SnakeTileAction;
+import idi.edu.idatt.mappe.models.tileaction.*;
 import javafx.scene.paint.Color;
 
 import java.util.HashMap;
@@ -19,11 +17,6 @@ import java.util.logging.Logger;
 public class ColorService {
     private final Map<Player, Color> playerColors = new HashMap<>();
     private final Map<String, Color> actionColors = new HashMap<>();
-
-    private static final List<String> DEFAULT_PLAYER_COLORS = List.of(
-            "#e74c3c", "#3498db", "#2ecc71", "#f1c40f", "#9b59b6",
-            "#e67e22", "#1abc9c", "#34495e", "#d35400", "#16a085"
-    );
 
     private static final Logger logger = Logger.getLogger(ColorService.class.getName());
 
@@ -41,15 +34,11 @@ public class ColorService {
         actionColors.put("LadderTileAction", Color.web("#d0f0c0")); // Light green
         actionColors.put("SnakeTileAction", Color.web("#ffd1d1")); // Light red
         actionColors.put("RandomTeleportTileAction", Color.LIGHTBLUE);
-        actionColors.put("SkipTurnTileAction", Color.LIGHTSALMON);
-        actionColors.put("ExtraThrowAction", Color.LIGHTYELLOW);
+        actionColors.put("MissingTurnTileAction", Color.LIGHTSALMON);
+        actionColors.put("ExtraThrowAction", Color.MEDIUMPURPLE);
         actionColors.put("GoToStartTileAction", Color.LIGHTCORAL);
         actionColors.put("SwapAction", Color.GOLD);
-        actionColors.put("StartingAreaTileAction", Color.LIGHTGRAY);
-        actionColors.put("SafeZoneTileAction", Color.LIGHTGREEN);
-        actionColors.put("WinTileAction", Color.GOLD);
 
-        // Ladder and snake destination colors
         actionColors.put("LadderDestination", Color.web("#90EE90")); // Lighter green
         actionColors.put("SnakeDestination", Color.web("#FFC0CB")); // Light pink
     }
@@ -119,8 +108,24 @@ public class ColorService {
             return Color.BEIGE;
         }
 
-        String actionType = action.getClass().getSimpleName();
-        return actionColors.getOrDefault(actionType, Color.BEIGE);
+        if (action instanceof LadderTileAction) {
+            return actionColors.get("LadderTileAction");
+        } else if (action instanceof SnakeTileAction) {
+            return actionColors.get("SnakeTileAction");
+        } else if (action instanceof RandomTeleportTileAction) {
+            return actionColors.get("RandomTeleportTileAction");
+        } else if (action instanceof MissingTurnTileAction) {
+            return actionColors.get("MissingTurnTileAction");
+        } else if (action instanceof ExtraThrowAction) {
+            return actionColors.get("ExtraThrowAction");
+        } else if (action instanceof GoToStartTileAction) {
+            return actionColors.get("GoToStartTileAction");
+        } else if (action instanceof SwapAction) {
+            return actionColors.get("SwapAction");
+        }
+
+        logger.warning("Unknown Tile action: " + action.getClass().getName());
+        return Color.BEIGE;
     }
 
     /**
@@ -141,63 +146,4 @@ public class ColorService {
         return actionColors.get("SnakeDestination");
     }
 
-    /**
-     * Gets the list of default player colors in hex format.
-     *
-     * @return A list of hex color strings
-     */
-    public List<String> getDefaultPlayerColors() {
-        return DEFAULT_PLAYER_COLORS;
-    }
-
-    /**
-     * Gets a default player color by index.
-     *
-     * @param index The index of the color
-     * @return The hex color string
-     */
-    public String getDefaultPlayerColor(int index) {
-        return DEFAULT_PLAYER_COLORS.get(index % DEFAULT_PLAYER_COLORS.size());
-    }
-
-    /**
-     * Gets a random default player color.
-     *
-     * @return A random hex color string
-     */
-    public String getRandomDefaultPlayerColor() {
-        Random random = new Random();
-        return DEFAULT_PLAYER_COLORS.get(random.nextInt(DEFAULT_PLAYER_COLORS.size()));
-    }
-
-    /**
-     * Returns the color for a safe zone tile
-     *
-     * @return The color for a safe zone tile
-     */
-    public Color getSafeZoneColor() {
-        return Color.LIGHTGREEN;
-    }
-
-    /**
-     * Returns the color for a starting area tile
-     *
-     * @return The color for a starting area tile
-     */
-    public Color getStartingAreaColor() {
-        return actionColors.get("StartingAreaTileAction");
-    }
-
-    /**
-     * Returns the color for a home/winning tile
-     *
-     * @return The color for a home/winning tile
-     */
-    public Color getHomeColor() {
-        return Color.GOLD;
-    }
-
-    public Color getWinTileColor() {
-        return actionColors.get("WinTileAction");
-    }
 }
