@@ -3,14 +3,12 @@ package idi.edu.idatt.mappe.views.game;
 import idi.edu.idatt.mappe.models.Player;
 import idi.edu.idatt.mappe.models.Tile;
 import idi.edu.idatt.mappe.models.Board;
-import idi.edu.idatt.mappe.services.AnimationService;
+import idi.edu.idatt.mappe.services.AnimationController;
 import idi.edu.idatt.mappe.services.TokenService;
 import idi.edu.idatt.mappe.utils.CoordinateConverter;
 import javafx.scene.Node;
 import javafx.scene.layout.Pane;
-import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
-import javafx.scene.shape.Circle;
 import javafx.scene.shape.Rectangle;
 
 import java.util.*;
@@ -25,7 +23,7 @@ public class PlayerTokenView {
 
     private final Pane boardPane;
     private final TokenService tokenService;
-    private final AnimationService animationService;
+    private final AnimationController animationController;
     private final Map<Player, Node> playerTokens = new HashMap<>();
     private final Map<Player, Color> playerColors = new HashMap<>();
 
@@ -45,16 +43,16 @@ public class PlayerTokenView {
      *
      * @param boardPane The pane to add tokens to
      * @param tokenService The token service for creating tokens
-     * @param animationService The animation service for animating tokens
+     * @param animationController The animation service for animating tokens
      * @param boardWidth The width of the board
      * @param boardHeight The height of the board
      */
     public PlayerTokenView(Pane boardPane, TokenService tokenService,
-                           AnimationService animationService,
+                           AnimationController animationController,
                            double boardWidth, double boardHeight) {
         this.boardPane = boardPane;
         this.tokenService = tokenService;
-        this.animationService = animationService;
+        this.animationController = animationController;
         this.boardWidth = boardWidth;
         this.boardHeight = boardHeight;
 
@@ -209,9 +207,7 @@ public class PlayerTokenView {
         double finalX = tileCenterX - tokenWidth / 2 + offset[0];
         double finalY = tileCenterY - tokenHeight / 2 + offset[1];
 
-        animationService.setTokenPosition(token, finalX, finalY);
-        //animationService.animateTokenMove(token, finalX, finalY, () -> {
-        //});
+        animationController.setTokenPosition(token, finalX, finalY);
     }
 
     /**
@@ -240,12 +236,10 @@ public class PlayerTokenView {
         List<Player> playersOnTile = tileOccupancy.getOrDefault(tileIndex, Collections.emptyList());
         int playerPosition = playersOnTile.indexOf(player);
 
-        // If there is only one player on the tile, there is no need for offset
         if (playerPosition == -1 || playersOnTile.size() <= 1) {
             return new double[]{0, 0};
         }
 
-        // With two players, position them side by side
         if (playersOnTile.size() == 2) {
             return new double[]{
                     playerPosition == 0 ? -PLAYER_OFFSET_HORIZONTAL/2 : PLAYER_OFFSET_HORIZONTAL/2,
@@ -253,7 +247,6 @@ public class PlayerTokenView {
             };
         }
 
-        // With 3-4 players, position them like a square
         if (playersOnTile.size() <= 4) {
             int row = playerPosition / 2;
             int col = playerPosition % 2;
@@ -263,7 +256,6 @@ public class PlayerTokenView {
             };
         }
 
-        // With more then 4 players, stack them in rows
         int maxPlayersPerRow = (int)Math.ceil(Math.sqrt(playersOnTile.size()));
         int row = playerPosition / maxPlayersPerRow;
         int col = playerPosition % maxPlayersPerRow;
@@ -275,48 +267,5 @@ public class PlayerTokenView {
                 (col - rowOffset) * PLAYER_OFFSET_HORIZONTAL,
                 (row - colOffset) * PLAYER_OFFSET_VERTICAL
         };
-    }
-
-
-    /**
-     * Removes a player token from the board.
-     *
-     * @param player The player to remove
-     */
-    public void removePlayerToken(Player player) {
-        Node token = playerTokens.remove(player);
-        if (token != null) {
-            boardPane.getChildren().remove(token);
-            playerColors.remove(player);
-
-            for (List<Player> players : tileOccupancy.values()) {
-                players.remove(player);
-            }
-
-            logger.info("Removed token for player: " + player.getName());
-        }
-    }
-
-    /**
-     * Clears all player tokens from the board.
-     */
-    public void clearPlayerTokens() {
-        playerTokens.forEach((player, token) -> boardPane.getChildren().remove(token));
-        playerTokens.clear();
-        playerColors.clear();
-        tileOccupancy.clear();
-        logger.info("Cleared all player tokens");
-    }
-
-    /**
-     * Resets a player's token position for game restart.
-     *
-     * @param player The player whose token to reset
-     */
-    public void resetPlayerPosition(Player player) {
-        Node tokenNode = playerTokens.get(player);
-        if (tokenNode != null) {
-            boardPane.getChildren().remove(tokenNode);
-        }
     }
 }
