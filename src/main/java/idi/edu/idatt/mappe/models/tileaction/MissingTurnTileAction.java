@@ -28,6 +28,7 @@ public class MissingTurnTileAction implements TileAction {
      *
      * @return The description of the action
      */
+    @Override
     public String getDescription() {
         return description;
     }
@@ -41,6 +42,6 @@ public class MissingTurnTileAction implements TileAction {
      */
     @Override
     public void perform(Player player) {
-        //player.setMissingTurn(true);
+        player.setMissingTurn(true);
     }
 }

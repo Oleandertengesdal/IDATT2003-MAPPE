@@ -1,0 +1,40 @@
+@startuml
+interface BoardFileReader {
+    + Board readBoard(String filePath) throws JsonParsingException
+}
+
+class BoardFileReaderGson {
+    + Board readBoard(String fileName) throws JsonParsingException
+}
+
+interface BoardFileWriter {
+    + void writeBoard(Board board, String filePath) throws IOException
+}
+
+class BoardFileWriterGson {
+    + void writeBoard(Board board, String filePath) throws IOException
+    + JsonObject serializeBoard(Board board, String name, String description) throws TileActionNotFoundException
+    + JsonObject getJsonObject(TileAction action) throws TileActionNotFoundException
+}
+
+interface PlayerFileReader {
+    + Player readPlayer(String filePath) throws IOException
+}
+
+class PlayerFileReaderCVS {
+    + Player readPlayer(String fileName) throws IOException
+}
+
+interface PlayerFileWriter {
+    + void writePlayer(Player player, String filePath) throws IOException
+}
+
+class PlayerFileWriterCVS {
+    + void writePlayer(Player player, String filePath) throws IOException
+}
+
+BoardFileReader <|.. BoardFileReaderGson
+BoardFileWriter <|.. BoardFileWriterGson
+PlayerFileReader <|.. PlayerFileReaderCVS
+PlayerFileWriter <|.. PlayerFileWriterCVS
+@enduml

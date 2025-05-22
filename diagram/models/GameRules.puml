@@ -1,0 +1,16 @@
+@startuml
+class GameRules {
+    - String boardName
+    - String boardDescription
+    - GameType gameType
+    - String boardVariant
+    - int numberOfDice
+    - int diceSides
+    - boolean extraThrowOnMax
+    - boolean startOnlyWithSix
+    - boolean skipTurnOnSnake
+    - boolean extraTurnOnLadder
+    - boolean teleportRandom
+    - int consecutiveSixesLimit
+}
+@enduml

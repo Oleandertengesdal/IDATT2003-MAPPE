@@ -34,6 +34,7 @@ public class SnakeTileAction implements TileAction {
      *
      * @return The description of the snake
      */
+    @Override
     public String getDescription() {
         return description;
     }

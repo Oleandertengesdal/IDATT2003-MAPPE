@@ -12,4 +12,6 @@ public interface TileAction {
      * @param player The player to move
      */
     void perform(Player player);
+
+    String getDescription();
 }

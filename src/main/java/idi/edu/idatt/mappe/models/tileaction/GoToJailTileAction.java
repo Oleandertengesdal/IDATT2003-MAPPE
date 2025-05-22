@@ -13,6 +13,7 @@ public class GoToJailTileAction implements TileAction {
         this.board = board;
     }
 
+    @Override
     public String getDescription() {
         return description;
     }
