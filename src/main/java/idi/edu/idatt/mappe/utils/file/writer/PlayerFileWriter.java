@@ -8,6 +8,9 @@ import java.util.List;
 /**
  * PlayerFileWriter is an interface for writing player data to a file.
  * It provides a method to save a list of players to a specified file path.
+ *
+ * @see Player
+ * @version 1.0
  */
 public interface PlayerFileWriter {
     public void savePlayers(List<Player> players, String filePath) throws IOException;
