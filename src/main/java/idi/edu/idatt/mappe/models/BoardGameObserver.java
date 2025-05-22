@@ -31,4 +31,17 @@ public interface BoardGameObserver {
      */
     void onPlayerCaptured(Player captor, Player victim);
 
+    /**
+     * Called when a player gets an extra turn
+     *
+     * @param player The player who gets an extra turn
+     */
+    void onPlayerExtraTurn(Player player);
+
+    /**
+     * Called when a player loses a turn
+     *
+     * @param player The player who loses a turn
+     */
+    void onPlayerSkipTurn(Player player);
 }
