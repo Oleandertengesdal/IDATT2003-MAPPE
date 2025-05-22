@@ -36,7 +36,7 @@ public class TokenService {
      */
     private void loadTokenImages() {
         String[] tokenNames = {
-                "star", "crown", "car", "hat", "dog", "cat", "bishop", "burger",
+                "star", "car", "hat", "dog", "cat", "bishop", "burger",
                 "chef", "controller", "graduation", "knight", "shoe", "skate",
                 "skateboard", "wizard", "default", "none"
         };
