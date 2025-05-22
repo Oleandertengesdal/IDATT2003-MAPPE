@@ -1,5 +1,7 @@
 package idi.edu.idatt.mappe.models;
 
+import idi.edu.idatt.mappe.models.enums.GameType;
+import idi.edu.idatt.mappe.models.enums.GameState;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -13,10 +15,12 @@ class BoardGameTest {
 
     @BeforeEach
     void setUp() {
-        boardGame = new BoardGame();
-        boardGame.createBoard(100);
-        player1 = new Player("Player1", "token1");
-        player2 = new Player("Player2", "token2");
+        Board board = new Board(10, 10, GameType.SNAKES_AND_LADDERS);
+        boardGame = new BoardGame(GameType.SNAKES_AND_LADDERS);
+        boardGame.setBoard(board);
+        boardGame.createDice(2);
+        player1 = new Player("Player1", "Token1");
+        player2 = new Player("Player2", "Token2");
         boardGame.addPlayer(player1);
         boardGame.addPlayer(player2);
     }
@@ -35,16 +39,11 @@ class BoardGameTest {
     }
 
     @Test
-    void testSetCurrentPlayer() {
-        boardGame.setCurrentPlayer(player1);
-        assertEquals(player1, boardGame.getCurrentPlayer());
-    }
-
-    @Test
     void testStartGame() {
         boardGame.startGame();
         assertEquals(boardGame.getBoard().getTileByIndex(1), player1.getCurrentTile());
         assertEquals(boardGame.getBoard().getTileByIndex(1), player2.getCurrentTile());
+        assertEquals(GameState.STARTED, boardGame.getGameState());
     }
 
     @Test
@@ -57,10 +56,7 @@ class BoardGameTest {
 
     @Test
     void testGetWinner() {
-        Tile lastTile = boardGame.getBoard().getTileByIndex(100);
-        boardGame.getBoard().addTile(100 ,lastTile);
-        player1.placeOnTile(lastTile);
-        boardGame.getWinner();
-        // Check console output for winner announcement
+        player1.placeOnTile(boardGame.getBoard().getTileByIndex(100));
+        assertEquals(player1, boardGame.getWinner());
     }
 }
