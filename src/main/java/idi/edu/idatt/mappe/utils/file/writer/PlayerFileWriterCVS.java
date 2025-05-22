@@ -9,6 +9,16 @@ import java.util.logging.Logger;
 
 import static java.util.logging.Logger.getLogger;
 
+/**
+ * PlayerFileWriterCVS is a class that implements the PlayerFileWriter interface.
+ * It provides functionality to save player data to a CSV file.
+ * <p>
+ *     This class is responsible for writing player data to a file in CSV format.
+ * </p>
+ *
+ * @see PlayerFileWriter
+ * @version 1.0
+ */
 public class PlayerFileWriterCVS implements PlayerFileWriter {
 
     private final Logger logger = getLogger(PlayerFileWriterCVS.class.getName());
@@ -30,4 +40,5 @@ public class PlayerFileWriterCVS implements PlayerFileWriter {
             logger.warning("Could not write to file: " + e.getMessage());
             throw new IOException("Could not write to file");
         }
-    }}
+    }
+}
