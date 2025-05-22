@@ -11,8 +11,21 @@ import javafx.scene.shape.Circle;
 import javafx.scene.shape.CubicCurve;
 import javafx.scene.shape.Line;
 import javafx.scene.shape.Polygon;
-import javafx.scene.effect.DropShadow;
 
+/**
+ * Class representing a connection between two tiles in the game board.
+ * This class is responsible for drawing the connection
+ * between tiles, which can be either a ladder or a snake.
+ *
+ *
+ * This class has been created with help from ChatGPT.
+ * The code creating visual views for snakes and ladders has partly been created
+ * with the help og ChatGPT.
+ * The Methods that have used ChatGPT are drawLadder and drawSnake.
+ *
+ * The code has been modified to fit the project and to be more readable.
+ *
+ */
 public class ConnectionView extends Group {
 
     public enum Type {
@@ -21,12 +34,21 @@ public class ConnectionView extends Group {
 
     private static final double TILE_PADDING = 10;
 
+    /**
+     * Constructor for ConnectionView.
+     *
+     * @param from The starting tile
+     * @param to The ending tile
+     * @param type The type of connection (LADDER or SNAKE)
+     * @param rows The number of rows in the board
+     * @param cols The number of columns in the board
+     * @param width The width of the board
+     * @param height The height of the board
+     */
     public ConnectionView(Tile from, Tile to, Type type, int rows, int cols, double width, double height) {
-        // Calculate tile size
         double tileWidth = width / cols;
         double tileHeight = height / rows;
 
-        // Calculate center positions of both tiles
         double[] start = CoordinateConverter.boardToScreen(from.getY(), from.getX(), rows, cols, width, height);
         double[] end = CoordinateConverter.boardToScreen(to.getY(), to.getX(), rows, cols, width, height);
 
@@ -42,24 +64,32 @@ public class ConnectionView extends Group {
         }
     }
 
+    /**
+     * Draws a ladder between two points.
+     *
+     * This method was partly created with the help of ChatGPT.
+     * The code has not been directly copied, but has been modified to fit the project,
+     * but some parts are similar to the code created by ChatGPT.
+     *
+     * @param x1 the x-coordinate of the start point
+     * @param y1 the y-coordinate of the start point
+     * @param x2 the x-coordinate of the end point
+     * @param y2 the y-coordinate of the end point
+     * @param tileWidth the width of the tile
+     */
     private void drawLadder(double x1, double y1, double x2, double y2, double tileWidth) {
-        // Calculate ladder width based on tile size
         double ladderWidth = tileWidth * 0.4;
 
-        // Calculate the direction vector and perpendicular vector
         double dirX = x2 - x1;
         double dirY = y2 - y1;
         double length = Math.sqrt(dirX * dirX + dirY * dirY);
 
-        // Normalize direction vector
         dirX /= length;
         dirY /= length;
 
-        // Calculate perpendicular vector (90 degrees counter-clockwise)
         double perpX = -dirY;
         double perpY = dirX;
 
-        // Calculate the points for the ladder sides
         double side1X1 = x1 + perpX * ladderWidth/2;
         double side1Y1 = y1 + perpY * ladderWidth/2;
         double side1X2 = x2 + perpX * ladderWidth/2;
@@ -70,7 +100,6 @@ public class ConnectionView extends Group {
         double side2X2 = x2 - perpX * ladderWidth/2;
         double side2Y2 = y2 - perpY * ladderWidth/2;
 
-        // Create side lines with gradient color and thicker width
         Line side1 = new Line(side1X1, side1Y1, side1X2, side1Y2);
         Line side2 = new Line(side2X1, side2Y1, side2X2, side2Y2);
 
@@ -85,21 +114,11 @@ public class ConnectionView extends Group {
         side1.setStrokeWidth(5);
         side2.setStrokeWidth(5);
 
-        // Add shadow effect
-        DropShadow dropShadow = new DropShadow();
-        dropShadow.setRadius(3.0);
-        dropShadow.setOffsetX(2.0);
-        dropShadow.setOffsetY(2.0);
-        dropShadow.setColor(Color.color(0, 0, 0, 0.3));
-
-        side1.setEffect(dropShadow);
-        side2.setEffect(dropShadow);
 
         getChildren().addAll(side1, side2);
 
-        // Add rungs (steps)
-        int steps = (int)(length / 20) + 2;  // Adjust number of steps based on ladder length
-        steps = Math.max(3, Math.min(12, steps));  // At least 3 steps, at most 12
+        int steps = (int)(length / 20) + 2;
+        steps = Math.min(steps, 20);
 
         for (int i = 0; i <= steps; i++) {
             double t = (double) i / steps;
@@ -111,19 +130,30 @@ public class ConnectionView extends Group {
             Line rung = new Line(px1, py1, px2, py2);
             rung.setStroke(Color.GOLDENROD);
             rung.setStrokeWidth(3);
-            rung.setEffect(dropShadow);
             getChildren().add(rung);
         }
     }
 
+    /**
+     * Draws a snake between two points.
+     *
+     * This method was partly created with the help of ChatGPT.
+     * The code has not been directly copied, but has been modified to fit the project,
+     * but some parts are similar to the code created by ChatGPT.
+     *
+     * @param x1 The x-coordinate of the start point
+     * @param y1 The y-coordinate of the start point
+     * @param x2 The x-coordinate of the end point
+     * @param y2 The y-coordinate of the end point
+     * @param tileWidth The width of the tile
+     * @param tileHeight The height of the tile
+     */
     private void drawSnake(double x1, double y1, double x2, double y2, double tileWidth, double tileHeight) {
-        // Calculate control points for a cubic curve
         double ctrlX1 = x1 + (x2 - x1) * 0.25 + (Math.random() - 0.5) * tileWidth * 1.5;
         double ctrlY1 = y1 + (y2 - y1) * 0.25 + (Math.random() - 0.5) * tileHeight * 1.5;
         double ctrlX2 = x1 + (x2 - x1) * 0.75 + (Math.random() - 0.5) * tileWidth * 1.5;
         double ctrlY2 = y1 + (y2 - y1) * 0.75 + (Math.random() - 0.5) * tileHeight * 1.5;
 
-        // Create a cubic curve for snake body
         CubicCurve snakeBody = new CubicCurve(
                 x1, y1,
                 ctrlX1, ctrlY1,
@@ -131,7 +161,6 @@ public class ConnectionView extends Group {
                 x2, y2
         );
 
-        // Create gradient for snake
         LinearGradient snakeGradient = new LinearGradient(
                 0, 0, 1, 1, true, CycleMethod.NO_CYCLE,
                 new Stop(0, Color.DARKGREEN),
@@ -143,21 +172,10 @@ public class ConnectionView extends Group {
         snakeBody.setStrokeWidth(tileWidth * 0.25);
         snakeBody.setFill(null);
 
-        // Add shadow
-        DropShadow dropShadow = new DropShadow();
-        dropShadow.setRadius(5.0);
-        dropShadow.setOffsetX(3.0);
-        dropShadow.setOffsetY(3.0);
-        dropShadow.setColor(Color.color(0, 0, 0, 0.5));
-        snakeBody.setEffect(dropShadow);
 
-        // Create snake head
         double headRadius = tileWidth * 0.2;
         Circle head = new Circle(x1, y1, headRadius, Color.DARKGREEN);
-        head.setEffect(dropShadow);
 
-        // Create snake eyes
-        // Calculate direction from first control point to head
         double dirX = x1 - ctrlX1;
         double dirY = y1 - ctrlY1;
         double dir = Math.atan2(dirY, dirX);
@@ -204,7 +222,6 @@ public class ConnectionView extends Group {
         );
         tongue.setFill(Color.RED);
 
-        // Add all parts to the group
         getChildren().addAll(snakeBody, head, leftEye, rightEye, leftPupil, rightPupil, tongue);
     }
 }
