@@ -15,6 +15,7 @@ import javafx.scene.text.FontWeight;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.logging.Logger;
 
 /**
@@ -29,6 +30,10 @@ public class PlayerStatusPanelView extends VBox {
     private final VBox playersContainer;
 
     private final Map<Player, Label> positionLabels = new HashMap<>();
+
+    private final Map<Player, Label> moneyLabels = new HashMap<>();
+    private boolean showMoney = false;
+
 
 
     /**
@@ -80,9 +85,23 @@ public class PlayerStatusPanelView extends VBox {
     }
 
     /**
+     * Sets whether to show money instead of position.
+     *
+     * @param showMoney True to show money, false to show position
+     */
+    public void showMoneyInsteadOfPosition(boolean showMoney) {
+        this.showMoney = showMoney;
+
+        for (Player player : playerEntries.keySet()) {
+            HBox entryBox = playerEntries.get(player);
+            updatePlayerDisplay(player, entryBox);
+        }
+    }
+
+    /**
      * Creates a HBox with player status information
      *
-     * @param player The player who's name and position will be displayed
+     * @param player The player who's status will be displayed
      * @param tokenNode The token node to display
      */
     private HBox createPlayerStatusBox(Player player, Node tokenNode) {
@@ -101,19 +120,75 @@ public class PlayerStatusPanelView extends VBox {
         nameLabel.setId("name-" + player.getName());
         nameLabel.setStyle("-fx-text-fill: #222222;");
 
-        Label positionLabel = new Label(getPositionText(player));
-        positionLabel.setFont(Font.font("Arial", 13));
-        positionLabel.setId("position-" + player.getName());
-        positionLabel.setStyle("-fx-text-fill: #666666;");
+        Label statusLabel = new Label(showMoney ? getMoneyText(player) : getPositionText(player));
+        statusLabel.setFont(Font.font("Arial", 13));
+        statusLabel.setId(showMoney ? "money-" + player.getName() : "position-" + player.getName());
+        statusLabel.setStyle("-fx-text-fill: #666666;");
 
-        positionLabels.put(player, positionLabel);
+        if (showMoney) {
+            moneyLabels.put(player, statusLabel);
+        } else {
+            positionLabels.put(player, statusLabel);
+        }
 
-        VBox infoBox = new VBox(3, nameLabel, positionLabel);
+        VBox infoBox = new VBox(3, nameLabel, statusLabel);
         infoBox.setAlignment(Pos.CENTER_LEFT);
 
         entryBox.getChildren().addAll(tokenBox, infoBox);
         return entryBox;
     }
+
+    /**
+     * Updates the player display based on the current mode (position or money)
+     */
+    private void updatePlayerDisplay(Player player, HBox entryBox) {
+        if (entryBox == null) return;
+
+        AtomicReference<VBox> infoBox = new AtomicReference<>();
+        entryBox.getChildren().stream()
+                .filter(VBox.class::isInstance)
+                .findFirst()
+                .ifPresent(node -> infoBox.set((VBox) node));
+
+        if (infoBox.get() == null || infoBox.get().getChildren().size() < 2) return;
+
+        Node statusNode = infoBox.get().getChildren().get(1);
+        if (statusNode instanceof Label) {
+            Label statusLabel = (Label) statusNode;
+
+            if (showMoney) {
+                statusLabel.setText(getMoneyText(player));
+                moneyLabels.put(player, statusLabel);
+            } else {
+                statusLabel.setText(getPositionText(player));
+                positionLabels.put(player, statusLabel);
+            }
+        }
+    }
+
+    /**
+     * Gets the money text for a player.
+     */
+    private String getMoneyText(Player player) {
+        return "Money: " + player.getMoney() + " coins";
+    }
+
+    /**
+     * Updates the money display for a player.
+     *
+     * @param player The player to update
+     */
+    public void updatePlayerMoney(Player player) {
+        Label moneyLabel = moneyLabels.get(player);
+        if (moneyLabel != null) {
+            moneyLabel.setText(getMoneyText(player));
+            logger.info("Updated money for " + player.getName() +
+                    " to: " + getMoneyText(player));
+        } else {
+            logger.warning("Money label for " + player.getName() + " not found");
+        }
+    }
+
 
     /**
      * Gets the position text for a player.
@@ -137,40 +212,5 @@ public class PlayerStatusPanelView extends VBox {
         } else {
             logger.warning("Position label for " + player.getName() + " not found");
         }
-    }
-
-    /**
-     * Updates the status for all players.
-     */
-    public void updateAllPlayerStatus() {
-        for (Player player : playerEntries.keySet()) {
-            updatePlayerStatus(player);
-        }
-    }
-
-    /**
-     * Removes a player from the status panel.
-     *
-     * @param player The player to remove
-     */
-    public void removePlayer(Player player) {
-        HBox entry = playerEntries.remove(player);
-        positionLabels.remove(player);
-        if (entry != null) {
-            playersContainer.getChildren().remove(entry);
-            logger.info("Removed player " + player.getName() + " from status panel");
-        } else {
-            logger.warning("Player " + player.getName() + " not found in status panel");
-        }
-    }
-
-    /**
-     * Clears all players from the status panel.
-     */
-    public void clearPlayers() {
-        playerEntries.clear();
-        playersContainer.getChildren().clear();
-        positionLabels.clear();
-        logger.info("Cleared all players from status panel");
     }
 }
